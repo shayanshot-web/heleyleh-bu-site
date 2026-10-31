@@ -20,7 +20,7 @@ export const people: Record<string, Person> = {
   'ali-khajeh': { name: { fa: 'علی خواجه', en: 'Ali Khajeh', ru: 'Али Хаджех' }, phone: '09171753730' },
   'amirreza-rahbar': { name: { fa: 'امیررضا رهبر', en: 'Amirreza Rahbar', ru: 'Амирреза Рахбар' }, phone: '09376037139' },
   'reza-mousavi': { name: { fa: 'سید رضا موسوی', en: 'Seyed Reza Mousavi', ru: 'Сейед Реза Мусави' }, phone: '09176008569' },
-  'hossein-khezri': { name: { fa: 'حسین خضری', en: 'Hossein Khezri', ru: 'Хосейн Хезри' } },
+  'hossein-khezri': { name: { fa: 'حسین خضری', en: 'Hossein Khezri', ru: 'Хосейн Хезри' }, phone: '09357173166' },
 };
 
 export type ExpIconName =
