@@ -2,6 +2,7 @@
 declare(strict_types=1);
 require __DIR__ . '/../cms-core/lib.php';
 require __DIR__ . '/views.php';
+require __DIR__ . '/xp.php';
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
@@ -35,6 +36,19 @@ $type = $_GET['type'] ?? 'post';
 if (!isset(TYPES[$type])) $type = 'post';
 $post = $_SERVER['REQUEST_METHOD'] === 'POST';
 if ($post) csrf_check();
+
+/* ---- تجربه‌ها و مجری‌ها (ذخیره با ترجمهٔ خودکار؛ منطق در xp.php) ---- */
+if ($a === 'save' && $post && in_array((string)($_POST['type'] ?? ''), XP_TYPES, true)) xp_save($user);
+if ($a === 'xp_seed' && $post) {
+    if (!can('experience')) { http_response_code(403); exit('دسترسی ندارید'); }
+    try { $n = xp_seed((int)$user['id']); $_SESSION['flash'] = $n ? $n . ' مورد (تجربه و مجری) وارد پنل شد.' : 'پنل از قبل داده دارد؛ چیزی وارد نشد.'; }
+    catch (Throwable $ex) { $_SESSION['flash'] = 'وارد کردن ناموفق بود: ' . $ex->getMessage(); }
+    redirect('/admin/?a=list&type=experience');
+}
+if (($a === 'tr_settings' || $a === 'tr_test') && $post) {
+    if ($user['role'] !== 'admin') { http_response_code(403); exit('دسترسی ندارید'); }
+    $a === 'tr_settings' ? xp_save_tr_settings() : xp_test_translate();
+}
 
 /* ---- ذخیره محتوا ---- */
 if ($a === 'save' && $post) {
@@ -83,6 +97,10 @@ if ($a === 'save' && $post) {
 }
 if ($a === 'delete' && $post) {
     $id = (int)($_POST['id'] ?? 0); $it = item_load($id);
+    if ($it && $it['type'] === 'person' && ($used = xp_person_usage($id))) {   // حذف مجری در حال استفاده، تجربه را به‌اشتباه «آزاد» نشان می‌داد
+        $_SESSION['flash'] = 'این مجری در این تجربه‌ها انتخاب شده و حذف نشد: ' . implode('، ', $used) . ' — ابتدا او را از آن‌ها بردارید.';
+        redirect('/admin/?a=list&type=person');
+    }
     if ($it && can($it['type']) && ($it['author_id'] == $user['id'] || can('others'))) {
         db()->prepare('DELETE FROM items WHERE id=?')->execute([$id]); $_SESSION['flash'] = 'حذف شد.';
         redirect('/admin/?a=list&type=' . $it['type']);

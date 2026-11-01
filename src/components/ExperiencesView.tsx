@@ -3,6 +3,7 @@ import ExpIcon from '@/components/ExpIcon';
 import { experiences, expUi, people, type Person } from '@/content/experiences';
 import { pagePath } from '@/lib/i18n';
 import type { Lang } from '@/content/types';
+import { toHtml } from '@/lib/jsx-html';
 
 const tel = (n: string) => `tel:+98${n.slice(1)}`;
 
@@ -27,10 +28,10 @@ function Avatar({ p, lang }: { p: Person; lang: Lang }) {
 }
 
 /** نمایش تجربه‌ها به‌همراه آدم‌هایشان (کارت با آیکن متحرک و جای عکس) */
-export function ExperiencesGrid({ lang }: { lang: Lang }) {
+function GridCards({ lang }: { lang: Lang }) {
   const u = expUi[lang];
   return (
-    <ul className="xp-grid">
+    <>
       {experiences.map((e) => (
         <li key={e.id} className="xp-card" data-sound="sea">
           <span className="xp-icon">
@@ -62,7 +63,33 @@ export function ExperiencesGrid({ lang }: { lang: Lang }) {
           )}
         </li>
       ))}
-    </ul>
+    </>
+  );
+}
+
+/**
+ * کارت‌ها به‌صورت HTML آماده داخل <ul> گذاشته می‌شوند (dangerouslySetInnerHTML).
+ * دلیل: پنل مدیریت (PHP) همین <ul> را با داده‌های پنل جایگزین می‌کند و React موقع هیدریشن
+ * محتوای داخلی این عنصر را مقایسه و بازنویسی نمی‌کند؛ پس داده‌های پنل می‌مانند و بقیهٔ صفحه (نظرها، صدا، منو) کار می‌کند.
+ */
+export function ExperiencesGrid({ lang }: { lang: Lang }) {
+  return <ul className="xp-grid" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: toHtml(<GridCards lang={lang} />) }} />;
+}
+
+function StripItems({ lang }: { lang: Lang }) {
+  return (
+    <>
+      {experiences.slice(0, 12).map((e) => (
+        <li key={e.id}>
+          <Link href={pagePath(lang, 'experiences')} data-sound="sea">
+            <span className="xp-icon sm">
+              <ExpIcon name={e.id} />
+            </span>
+            <span>{e.name[lang]}</span>
+          </Link>
+        </li>
+      ))}
+    </>
   );
 }
 
@@ -73,18 +100,7 @@ export function ExperiencesTeaser({ lang }: { lang: Lang }) {
     <section className="section xp-teaser">
       <div className="container">
         <h2 className="accent">{u.teaserTitle}</h2>
-        <ul className="xp-strip">
-          {experiences.slice(0, 12).map((e) => (
-            <li key={e.id}>
-              <Link href={pagePath(lang, 'experiences')} data-sound="sea">
-                <span className="xp-icon sm">
-                  <ExpIcon name={e.id} />
-                </span>
-                <span>{e.name[lang]}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <ul className="xp-strip" suppressHydrationWarning dangerouslySetInnerHTML={{ __html: toHtml(<StripItems lang={lang} />) }} />
         <p>
           <Link className="btn btn-blue" data-sound="pop" href={pagePath(lang, 'experiences')}>
             {u.teaserCta}
