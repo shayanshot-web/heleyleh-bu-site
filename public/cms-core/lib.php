@@ -14,6 +14,8 @@ const TYPES = [
     'event'   => ['label' => 'رویدادها',      'one' => 'رویداد',    'icon' => '◷'],
     'stay'    => ['label' => 'اقامتگاه‌ها',   'one' => 'اقامتگاه',  'icon' => '⌂'],
     'gallery' => ['label' => 'گالری',         'one' => 'تصویر',     'icon' => '▣'],
+    'experience' => ['label' => 'تجربه‌ها',   'one' => 'تجربه',     'icon' => '☼'],
+    'person'  => ['label' => 'مجری‌های تجربه‌ها', 'one' => 'مجری',   'icon' => '☺'],
 ];
 // آدرس بخش‌ها در هر زبان (همان اسلاگ‌های سایت)
 const SECTIONS = [
@@ -202,7 +204,7 @@ function can(string $cap, ?array $u = null): bool {
     $r = $u['role'];
     if ($r === 'admin') return true;
     $map = [
-        'editor'  => ['post', 'page', 'product', 'event', 'stay', 'gallery', 'media', 'messages', 'publish', 'others'],
+        'editor'  => ['post', 'page', 'product', 'event', 'stay', 'gallery', 'experience', 'person', 'media', 'messages', 'publish', 'others'],
         'manager' => ['product', 'event', 'stay', 'gallery', 'media', 'messages', 'publish', 'others'],
         'author'  => ['post', 'media'],
     ];
@@ -318,3 +320,7 @@ function unique_slug(string $type, string $lang, string $slug, int $exceptId): s
         $cand = $base . '-' . (++$n);
     }
 }
+
+/* ---------- ترجمهٔ خودکار و «تجربه‌ها و آدم‌هایش» ---------- */
+require_once __DIR__ . '/translate.php';
+require_once __DIR__ . '/experiences.php';

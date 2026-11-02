@@ -76,6 +76,7 @@ function page_list(array $user, string $type): void {
     $t = TYPES[$type];
     layout_start($t['label'], 'list-' . $type, $user);
     echo '<p><a class="btn primary" href="/admin/?a=edit&type=' . $type . '">+ ' . e($t['one']) . ' جدید</a></p>';
+    if (in_array($type, XP_TYPES, true)) xp_seed_box();
     $q = 'SELECT i.*, u.name AS author FROM items i LEFT JOIN users u ON u.id=i.author_id WHERE i.type=?';
     $args = [$type];
     if (!can('others')) { $q .= ' AND i.author_id=?'; $args[] = $user['id']; }
@@ -90,7 +91,9 @@ function page_list(array $user, string $type): void {
         $tr = db()->prepare('SELECT lang,title FROM item_tr WHERE item_id=? AND title<>""'); $tr->execute([$r['id']]); $trs = $tr->fetchAll(PDO::FETCH_KEY_PAIR);
         $title = $trs['fa'] ?? ($trs['en'] ?? ($trs['ru'] ?? '(بدون عنوان)'));
         $img = $r['image'] ? media_get((int)$r['image']) : null;
-        echo '<tr><td>' . ($img ? '<img class="thumb" src="' . e(media_url($img, true)) . '" alt="">' : '') . '</td><td><a href="/admin/?a=edit&type=' . $type . '&id=' . $r['id'] . '"><b>' . e($title) . '</b></a>' . ($type === 'page' ? ' <span class="muted">(' . e(PAGE_KEYS[$r['page_key']] ?? '') . ')</span>' : '') . '</td><td>';
+        $ic = '';
+        if ($type === 'experience') { $ex = json_decode($r['extra'] ?: '{}', true) ?: []; $svg = xp_icons()[$ex['icon'] ?? '']['svg'] ?? ''; $ic = $svg ? '<span class="xpi-mini">' . $svg . '</span>' : ''; }
+        echo '<tr><td>' . ($img ? '<img class="thumb" src="' . e(media_url($img, true)) . '" alt="">' : $ic) . '</td><td><a href="/admin/?a=edit&type=' . $type . '&id=' . $r['id'] . '"><b>' . e($title) . '</b></a>' . ($type === 'page' ? ' <span class="muted">(' . e(PAGE_KEYS[$r['page_key']] ?? '') . ')</span>' : '') . '</td><td>';
         foreach (LANGS as $l => $n) echo '<span class="lg ' . (isset($trs[$l]) ? 'on' : '') . '">' . strtoupper($l) . '</span>';
         echo '</td><td>' . badge($r['status']) . '</td><td>' . e($r['author']) . '</td><td class="muted">' . e(format_date((int)$r['updated'])) . '</td><td class="acts">';
         if (can('publish') && $r['status'] !== 'published') echo '<form method="post" action="/admin/?a=status"><input type="hidden" name="_csrf" value="' . e(csrf()) . '"><input type="hidden" name="id" value="' . $r['id'] . '"><input type="hidden" name="status" value="published"><button class="link">انتشار</button></form>';
@@ -110,6 +113,7 @@ function page_edit(array $user, string $type): void {
     if ($id && !$it) { http_response_code(404); exit('یافت نشد'); }
     if ($it && ($it['author_id'] != $user['id'] && !can('others'))) { http_response_code(403); exit('این مورد متعلق به شما نیست'); }
     $type = $it['type'] ?? $type; $t = TYPES[$type];
+    if (in_array($type, XP_TYPES, true)) { page_edit_xp($user, $type, $it); return; }
     layout_start(($it ? 'ویرایش ' : 'افزودن ') . $t['one'], 'list-' . $type, $user);
     $x = $it['extra'] ?? []; $img = !empty($it['image']) ? media_get((int)$it['image']) : null;
     echo '<form method="post" action="/admin/?a=save" class="editor" data-editor><input type="hidden" name="_csrf" value="' . e(csrf()) . '"><input type="hidden" name="type" value="' . e($type) . '"><input type="hidden" name="id" value="' . $id . '"><div class="cols"><div class="col-main">';
@@ -211,6 +215,7 @@ function page_users(array $user): void {
         ['رویدادها', '✔', '✔', '✔', ''],
         ['اقامتگاه‌ها', '✔', '✔', '✔', ''],
         ['گالری', '✔', '✔', '✔', ''],
+        ['تجربه‌ها و مجری‌ها', '✔', '✔', '', ''],
         ['کتابخانهٔ رسانه (آپلود عکس)', '✔', '✔', '✔', '✔'],
         ['پیام‌ها و نظرهای بازدیدکنندگان', '✔', '✔', '✔', ''],
         ['انتشار مستقیم', '✔', '✔', '✔', '— (نیاز به تأیید)'],
@@ -235,6 +240,7 @@ function page_settings(array $user): void {
     echo '<form method="post" action="/admin/?a=settings" class="box narrow"><input type="hidden" name="_csrf" value="' . e(csrf()) . '"><label>ایمیل دریافت پیام‌های تماس و درخواست‌ها<input name="notify_email" value="' . e(setting('notify_email')) . '" dir="ltr" placeholder="info@websiteco.ir"></label>';
     foreach (['fa' => 'فارسی', 'en' => 'English', 'ru' => 'Русский'] as $l => $n) echo '<label>یادداشت زیر لیست محصولات (' . $n . ')<textarea name="shop_note_' . $l . '" rows="2" dir="' . ($l === 'fa' ? 'rtl' : 'ltr') . '">' . e(setting('shop_note_' . $l)) . '</textarea></label>';
     echo '<button class="btn primary">ذخیره</button></form>';
+    xp_translate_settings_box();
     echo '<div class="box narrow"><h3>اطلاعات فنی</h3><p class="muted small" dir="ltr">PHP ' . e(PHP_VERSION) . ' · data: ' . e(CMS_DATA) . ' · uploads: ' . (is_writable(CMS_UPLOADS) ? 'writable' : 'NOT writable') . ' · GD: ' . (function_exists('imagecreatefromstring') ? 'yes' : 'no') . '</p></div>';
     layout_end();
 }

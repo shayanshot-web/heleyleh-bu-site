@@ -67,6 +67,7 @@ function cms_hero(string $title, string $meta = '', string $lead = ''): string {
 function cms_render_request(): void {
     if (isset($_GET['sitemap'])) { cms_sitemap(); return; }
     if (isset($_GET['searchindex'])) { cms_search_index(); return; }
+    if (isset($_GET['home'])) { cms_render_home(); return; }
     $p = trim((string)($_GET['p'] ?? ''), '/');
     $seg = $p === '' ? [] : explode('/', $p);
     $lang = 'fa';
@@ -83,6 +84,7 @@ function cms_render_request(): void {
     $type = SECTION_TYPES[$section] ?? null;
     $title = null; $desc = ''; $main = null; $canon = cms_url($lang, $section);
     $alts = []; $inject = ''; $items = [];
+    $keep = false;   // true: اسکریپت‌های Next حفظ می‌شود (فقط کارت‌های تجربه‌ها جایگزین شده و هیدریشن آن‌ها را بازنویسی نمی‌کند)
 
     if ($itemSlug !== '') {
         if (!$type || $type === 'gallery') cms_404();
@@ -113,8 +115,17 @@ function cms_render_request(): void {
         $s->execute([$lang, $section]); $pid = $s->fetchColumn();
         if ($pid) { $pi = item_load((int)$pid); $pg = $pi['tr'][$lang]; $title = $pg['title']; $desc = $pg['excerpt']; }
         $items = $type ? cms_items($type, $lang) : [];
-        if (!$pg && !$items) { header('Content-Type: text/html; charset=utf-8'); echo $tpl; return; }   // بدون تغییر: همان صفحه استاتیک
+        $xpInner = $section === 'experiences' ? xp_cards_html($lang) : '';   // تجربه‌ها و مجری‌های پنل (اگر منتشر شده باشد)
+        if (!$pg && !$items && $xpInner === '') { header('Content-Type: text/html; charset=utf-8'); echo $tpl; return; }   // بدون تغییر: همان صفحه استاتیک
         $list = '';
+        if ($xpInner !== '') {
+            if ($pg) $list .= '<div class="container xp-page"><ul class="xp-grid">' . $xpInner . '</ul></div>';   // متن ویرایش‌شدهٔ صفحه + کارت‌ها
+            else {
+                $swapped = xp_replace_ul($tpl, 'xp-grid', $xpInner);
+                if ($swapped === null) { header('Content-Type: text/html; charset=utf-8'); echo $tpl; return; }
+                $tpl = $swapped; $keep = true;
+            }
+        }
         if ($items) {
             $list = '<section class="container cms-list"><h2>' . e($pg ? $u['latest'] : '') . '</h2>' . ($type === 'gallery' ? cms_gallery($items, $lang) : cms_cards($items, $type, $lang, $section)) . ($type === 'product' && setting('shop_note_' . $lang) !== '' ? '<p class="notice">' . e(setting('shop_note_' . $lang)) . '</p>' : '') . '</section>';
             $list = str_replace('<h2></h2>', '', $list);
@@ -129,8 +140,10 @@ function cms_render_request(): void {
 
     // --- ساخت خروجی بر پایه قالب استاتیک ---
     $out = $tpl;
-    $out = preg_replace('#<script\b[^>]*>.*?</script>#si', '', $out);
-    $out = preg_replace('#<link\b[^>]*rel="preload"[^>]*as="script"[^>]*>#i', '', $out);
+    if (!$keep) {
+        $out = preg_replace('#<script\b[^>]*>.*?</script>#si', '', $out);
+        $out = preg_replace('#<link\b[^>]*rel="preload"[^>]*as="script"[^>]*>#i', '', $out);
+    }
     $out = preg_replace('#<html\b[^>]*>#i', '<html lang="' . $lang . '" dir="' . $u['dir'] . '">', $out, 1);
     if ($main !== null || !empty($inject)) {
         $out = preg_replace_callback('#(<main\b[^>]*>)(.*)(</main>)#si', function ($m) use ($main, $inject, $items) {
@@ -156,11 +169,29 @@ function cms_render_request(): void {
     }, $out);
     $css = '<style>.cms-thumb{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;margin-bottom:10px}.cms-cover img{width:100%;height:auto;border-radius:var(--radius);margin-bottom:18px}.cms-body img{max-width:100%;height:auto;border-radius:10px}.cms-body{overflow-wrap:anywhere}.cms-info{list-style:none;padding:0;margin:0 0 16px;color:var(--muted)}.cms-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.cms-gallery figure{margin:0}.cms-gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}.cms-gallery figcaption{font-size:.9rem;color:var(--muted);padding-top:4px}.cms-list{padding-block:24px 56px}.cms-req{margin-top:32px}</style>';
     $js = '<script>(function(){var b=document.querySelector(".nav-toggle"),n=document.getElementById("site-nav");if(b&&n)b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o)});document.querySelectorAll(".cms-req").forEach(function(f){f.addEventListener("submit",function(e){e.preventDefault();var s=f.querySelector(".form-status"),btn=f.querySelector("button");btn.disabled=true;fetch("/contact.php",{method:"POST",body:new FormData(f),credentials:"same-origin"}).then(function(r){return r.json()}).then(function(d){s.className="form-status "+(d.ok?"ok":"error");s.textContent=d.ok?f.dataset.ok:f.dataset.err;if(d.ok)f.reset()}).catch(function(){s.className="form-status error";s.textContent=f.dataset.err}).finally(function(){btn.disabled=false})})})})();</script>';
-    $out = preg_replace_callback('#</head>#i', fn() => $css . '</head>', $out, 1);
-    $out = preg_replace_callback('#</body>#i', fn() => $js . '</body>', $out, 1);
+    if (!$keep) {   // با حفظ اسکریپت‌های Next، منو و ظاهر را خود سایت اداره می‌کند
+        $out = preg_replace_callback('#</head>#i', fn() => $css . '</head>', $out, 1);
+        $out = preg_replace_callback('#</body>#i', fn() => $js . '</body>', $out, 1);
+    }
     header('Content-Type: text/html; charset=utf-8');
     header('Cache-Control: no-cache');
     echo $out;
+}
+
+/* صفحهٔ اصلی: نوار «تجربه‌ها» از پنل؛ هر مشکلی پیش بیاید همان صفحهٔ استاتیک نمایش داده می‌شود */
+function cms_render_home(): void {
+    $hl = (string)($_GET['hl'] ?? '');
+    $lang = in_array($hl, ['en', 'ru'], true) ? $hl : 'fa';
+    $file = CMS_ROOT . '/' . ($lang === 'fa' ? '' : $lang . '/') . 'index.html';
+    if (!is_file($file)) cms_404();
+    $html = (string)file_get_contents($file);
+    try {
+        $inner = xp_strip_html($lang);
+        if ($inner !== '' && ($swapped = xp_replace_ul($html, 'xp-strip', $inner)) !== null) $html = $swapped;
+    } catch (Throwable $ex) { /* همان صفحهٔ استاتیک */ }
+    header('Content-Type: text/html; charset=utf-8');
+    header('Cache-Control: no-cache');
+    echo $html;
 }
 
 /* فهرست جستجوی محتوای پنل (نوشته‌ها، صنایع دستی، اقامتگاه‌ها، رویدادها) برای صفحه جستجوی سایت */
