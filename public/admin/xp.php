@@ -61,7 +61,7 @@ function xp_save(array $user): never {
         $st = $pdo->prepare("INSERT INTO item_tr(item_id,lang,title,slug,excerpt,body) VALUES(?,?,?,'','','') ON CONFLICT(item_id,lang) DO UPDATE SET title=excluded.title");
         foreach ($titles as $l => $t) $st->execute([$id, $l, $t]);
         $pdo->commit();
-    } catch (Throwable $ex) { $pdo->rollBack(); http_response_code(500); exit('خطا در ذخیره: ' . e($ex->getMessage())); }
+    } catch (Throwable $ex) { $pdo->rollBack(); error_log('cms xp save: ' . $ex->getMessage()); http_response_code(500); exit('خطا در ذخیره؛ دوباره تلاش کنید.'); }
 
     $msg = 'ذخیره شد.';
     if ($done) $msg .= ' ترجمهٔ خودکار انجام شد (' . implode('، ', $done) . ')؛ لطفاً نتیجه را بازبینی کنید.';
@@ -149,7 +149,7 @@ function xp_save_tr_settings(): never {
     $prov = (string)($_POST['tr_provider'] ?? 'mymemory'); if (!isset(TR_PROVIDERS[$prov])) $prov = 'mymemory';
     $url = trim((string)($_POST['tr_url'] ?? ''));
     $mail = trim((string)($_POST['tr_email'] ?? ''));
-    if ($url !== '' && !preg_match('#^https?://[^\s]+$#i', $url)) { $_SESSION['flash'] = 'آدرس سرور ترجمه معتبر نیست (با https:// شروع شود).'; redirect('/admin/?a=settings'); }
+    if ($url !== '' && (!preg_match('#^https?://[^\s]+$#i', $url) || !tr_host_public($url))) { $_SESSION['flash'] = 'آدرس سرور ترجمه معتبر نیست (با https:// شروع شود و باید یک سرور عمومی باشد، نه آدرس داخلی).'; redirect('/admin/?a=settings'); }
     if ($mail !== '' && !filter_var($mail, FILTER_VALIDATE_EMAIL)) { $_SESSION['flash'] = 'ایمیل معتبر نیست.'; redirect('/admin/?a=settings'); }
     set_setting('tr_provider', $prov); set_setting('tr_url', mb_substr($url, 0, 300)); set_setting('tr_email', $mail);
     if (!empty($_POST['tr_key_clear'])) set_setting('tr_key', '');

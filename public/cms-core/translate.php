@@ -15,6 +15,15 @@ function tr_provider(): string {
     return isset(TR_PROVIDERS[$p]) ? $p : 'mymemory';
 }
 
+/** آدرس باید به یک سرور عمومی برسد؛ آی‌پی‌های داخلی/رزرو (localhost، شبکهٔ خصوصی، metadata ابری) رد می‌شوند (جلوگیری از SSRF) */
+function tr_host_public(string $url): bool {
+    $h = parse_url($url, PHP_URL_HOST); if (!is_string($h) || $h === '') return false;
+    $ips = filter_var($h, FILTER_VALIDATE_IP) ? [$h] : (gethostbynamel($h) ?: []);
+    if (!$ips) return false;
+    foreach ($ips as $ip) if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) return false;
+    return true;
+}
+
 /** درخواست HTTPS ساده با timeout کوتاه؛ خروجی: [کد وضعیت, بدنه] یا [0, پیام خطا] */
 function tr_http(string $url, ?array $post = null, bool $json = false): array {
     if (!preg_match('#^https?://#i', $url)) return [0, 'آدرس سرویس معتبر نیست.'];
@@ -54,6 +63,7 @@ function cms_translate(string $text, string $to, string $from = 'fa'): array {
         if (stripos($out, 'MYMEMORY WARNING') !== false || (int)($j['responseStatus'] ?? 200) === 429) return ['ok' => false, 'text' => '', 'err' => 'سقف روزانهٔ سرویس رایگان پر شده است.'];
     } elseif ($prov === 'libre') {
         $base = rtrim(setting('tr_url'), '/'); if ($base === '') return ['ok' => false, 'text' => '', 'err' => 'آدرس LibreTranslate در تنظیمات وارد نشده است.'];
+        if (!tr_host_public($base)) return ['ok' => false, 'text' => '', 'err' => 'آدرس LibreTranslate باید یک سرور عمومی باشد.'];
         $payload = ['q' => $text, 'source' => $from, 'target' => $to, 'format' => 'text'];
         $key = setting('tr_key'); if ($key !== '') $payload['api_key'] = $key;
         [$code, $body] = tr_http($base . '/translate', $payload, true);

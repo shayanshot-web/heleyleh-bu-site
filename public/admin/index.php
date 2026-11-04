@@ -9,7 +9,7 @@ header('Referrer-Policy: same-origin');
 header('Cache-Control: no-store');
 header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; form-action 'self'");
 
-try { db(); } catch (Throwable $ex) { http_response_code(500); exit('خطای دیتابیس: ' . e($ex->getMessage()) . ' — بررسی کنید پوشه ' . e(CMS_DATA) . ' قابل نوشتن باشد و افزونه pdo_sqlite فعال باشد.'); }
+try { db(); } catch (Throwable $ex) { error_log('cms db: ' . $ex->getMessage()); http_response_code(500); exit('خطای دیتابیس؛ قابل‌نوشتن‌بودن پوشهٔ داده و فعال‌بودن pdo_sqlite را بررسی کنید (جزئیات در error_log هاست).'); }
 if (!(int)db()->query('SELECT COUNT(*) FROM users')->fetchColumn()) { header('Location: /install.php'); exit; }
 
 $a = $_GET['a'] ?? 'dashboard';
@@ -42,7 +42,7 @@ if ($a === 'save' && $post && in_array((string)($_POST['type'] ?? ''), XP_TYPES,
 if ($a === 'xp_seed' && $post) {
     if (!can('experience')) { http_response_code(403); exit('دسترسی ندارید'); }
     try { $n = xp_seed((int)$user['id']); $_SESSION['flash'] = $n ? $n . ' مورد (تجربه و مجری) وارد پنل شد.' : 'پنل از قبل داده دارد؛ چیزی وارد نشد.'; }
-    catch (Throwable $ex) { $_SESSION['flash'] = 'وارد کردن ناموفق بود: ' . $ex->getMessage(); }
+    catch (Throwable $ex) { error_log('cms seed: ' . $ex->getMessage()); $_SESSION['flash'] = 'وارد کردن ناموفق بود (جزئیات در error_log هاست).'; }
     redirect('/admin/?a=list&type=experience');
 }
 if (($a === 'tr_settings' || $a === 'tr_test') && $post) {
@@ -91,7 +91,7 @@ if ($a === 'save' && $post) {
                 ->execute([$id, $l, $title, $slug, $exc, $body]);
         }
         $pdo->commit();
-    } catch (Throwable $ex) { $pdo->rollBack(); http_response_code(500); exit('خطا در ذخیره: ' . e($ex->getMessage())); }
+    } catch (Throwable $ex) { $pdo->rollBack(); error_log('cms save: ' . $ex->getMessage()); http_response_code(500); exit('خطا در ذخیره؛ دوباره تلاش کنید.'); }
     $_SESSION['flash'] = 'ذخیره شد.';
     redirect('/admin/?a=edit&type=' . $type . '&id=' . $id);
 }
@@ -175,14 +175,17 @@ if ($a === 'cm_action' && $post) {
 /* ---- کاربران / پروفایل / تنظیمات ---- */
 if ($a === 'user_save' && $post) {
     if ($user['role'] !== 'admin') { http_response_code(403); exit; }
-    $id = (int)($_POST['id'] ?? 0); $un = trim((string)$_POST['username']); $name = trim((string)$_POST['name']); $role = $_POST['role'] ?? 'author'; $pw = (string)($_POST['password'] ?? '');
+    $id = (int)($_POST['id'] ?? 0); $un = trim((string)($_POST['username'] ?? '')); $name = mb_substr(trim((string)($_POST['name'] ?? '')), 0, 100); $role = $_POST['role'] ?? 'author'; $pw = (string)($_POST['password'] ?? '');
     if (!preg_match('/^[A-Za-z0-9_.-]{3,30}$/', $un) || $name === '' || !isset(ROLES[$role])) { $_SESSION['flash'] = 'نام کاربری (۳ تا ۳۰ حرف لاتین/عدد) و نام الزامی است.'; redirect('/admin/?a=users'); }
     if (($id === 0 || $pw !== '') && mb_strlen($pw) < 10) { $_SESSION['flash'] = 'رمز عبور حداقل ۱۰ نویسه باشد.'; redirect('/admin/?a=users'); }
     if ($id === (int)$user['id'] && $role !== 'admin') { $_SESSION['flash'] = 'نقش خودتان را نمی‌توانید کاهش دهید.'; redirect('/admin/?a=users'); }
     try {
         if ($id) {
             db()->prepare('UPDATE users SET username=?, name=?, email=?, role=? WHERE id=?')->execute([$un, $name, trim((string)$_POST['email']), $role, $id]);
-            if ($pw !== '') db()->prepare('UPDATE users SET pass=? WHERE id=?')->execute([password_hash($pw, PASSWORD_DEFAULT), $id]);
+            if ($pw !== '') {
+                db()->prepare('UPDATE users SET pass=? WHERE id=?')->execute([password_hash($pw, PASSWORD_DEFAULT), $id]);
+                kill_user_sessions($id, $id === (int)$user['id'] ? (string)($GLOBALS['__sess_token'] ?? '') : '');   // نشست‌های قدیمی با رمز تازه بسته می‌شوند
+            }
         } else {
             db()->prepare('INSERT INTO users(username,name,email,role,pass,created) VALUES(?,?,?,?,?,?)')->execute([$un, $name, trim((string)$_POST['email']), $role, password_hash($pw, PASSWORD_DEFAULT), now()]);
         }
@@ -192,22 +195,23 @@ if ($a === 'user_save' && $post) {
 }
 if ($a === 'user_delete' && $post) {
     $id = (int)$_POST['id'];
-    if ($user['role'] === 'admin' && $id !== (int)$user['id']) { db()->prepare('DELETE FROM users WHERE id=?')->execute([$id]); db()->prepare('UPDATE items SET author_id=? WHERE author_id=?')->execute([$user['id'], $id]); $_SESSION['flash'] = 'کاربر حذف شد.'; }
+    if ($user['role'] === 'admin' && $id !== (int)$user['id']) { kill_user_sessions($id); db()->prepare('DELETE FROM users WHERE id=?')->execute([$id]); db()->prepare('UPDATE items SET author_id=? WHERE author_id=?')->execute([$user['id'], $id]); $_SESSION['flash'] = 'کاربر حذف شد.'; }
     redirect('/admin/?a=users');
 }
 if ($a === 'profile' && $post) {
-    $name = trim((string)$_POST['name']); $email = trim((string)$_POST['email']); $cur = (string)$_POST['current']; $new = (string)$_POST['password'];
-    db()->prepare('UPDATE users SET name=?, email=? WHERE id=?')->execute([$name ?: $user['name'], $email, $user['id']]);
+    $name = trim((string)($_POST['name'] ?? '')); $email = trim((string)($_POST['email'] ?? '')); $cur = (string)($_POST['current'] ?? ''); $new = (string)($_POST['password'] ?? '');
+    if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) { $_SESSION['flash'] = 'ایمیل معتبر نیست.'; redirect('/admin/?a=profile'); }
+    db()->prepare('UPDATE users SET name=?, email=? WHERE id=?')->execute([mb_substr($name, 0, 100) ?: $user['name'], $email, $user['id']]);
     if ($new !== '') {
         $h = db()->query('SELECT pass FROM users WHERE id=' . (int)$user['id'])->fetchColumn();
         if (!password_verify($cur, $h)) $_SESSION['flash'] = 'رمز فعلی درست نیست.';
         elseif (mb_strlen($new) < 10) $_SESSION['flash'] = 'رمز جدید حداقل ۱۰ نویسه باشد.';
-        else { db()->prepare('UPDATE users SET pass=? WHERE id=?')->execute([password_hash($new, PASSWORD_DEFAULT), $user['id']]); $_SESSION['flash'] = 'رمز تغییر کرد.'; }
+        else { db()->prepare('UPDATE users SET pass=? WHERE id=?')->execute([password_hash($new, PASSWORD_DEFAULT), $user['id']]); kill_user_sessions((int)$user['id'], (string)($GLOBALS['__sess_token'] ?? '')); $_SESSION['flash'] = 'رمز تغییر کرد؛ ورودهای دیگر بسته شدند.'; }
     } else $_SESSION['flash'] = 'ذخیره شد.';
     redirect('/admin/?a=profile');
 }
 if ($a === 'settings' && $post && $user['role'] === 'admin') {
-    $em = trim((string)$_POST['notify_email']);
+    $em = trim((string)($_POST['notify_email'] ?? ''));
     if ($em !== '' && !filter_var($em, FILTER_VALIDATE_EMAIL)) $_SESSION['flash'] = 'ایمیل معتبر نیست.';
     else { set_setting('notify_email', $em); set_setting('shop_note_fa', mb_substr((string)$_POST['shop_note_fa'], 0, 500)); set_setting('shop_note_en', mb_substr((string)$_POST['shop_note_en'], 0, 500)); set_setting('shop_note_ru', mb_substr((string)$_POST['shop_note_ru'], 0, 500)); $_SESSION['flash'] = 'تنظیمات ذخیره شد.'; }
     redirect('/admin/?a=settings');

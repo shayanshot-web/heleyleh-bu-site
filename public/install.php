@@ -3,14 +3,16 @@ declare(strict_types=1);
 /**
  * نصب اولیهٔ پنل مدیریت هلیله: ساخت اولین مدیر کل.
  * فقط وقتی هیچ کاربری وجود ندارد کار می‌کند و بعد از ساخت مدیر، خودش غیرفعال می‌شود.
- * برای امنیت، «کد نصب» لازم است (در همین فایل).
+ * برای امنیت، «کد نصب» لازم است: فایل install-code.txt (حداقل ۱۶ نویسهٔ تصادفی) را خودتان داخل پوشهٔ داده
+ * (cms_data) بسازید. فایل نباشد، این صفحه ۴۰۴ می‌دهد. بعد از نصب موفق فایل خودکار پاک می‌شود. کدی در مخزن نیست.
  */
 require __DIR__ . '/cms-core/lib.php';
-header('X-Frame-Options: DENY'); header('Cache-Control: no-store');
-const INSTALL_CODE = 'HLL-D22323C6EF';
+header('X-Frame-Options: DENY'); header('Cache-Control: no-store'); header('X-Robots-Tag: noindex');
+$INSTALL_CODE = setup_code('install-code');
+if ($INSTALL_CODE === null) { http_response_code(404); exit; }
 
 try { $n = (int)db()->query('SELECT COUNT(*) FROM users')->fetchColumn(); }
-catch (Throwable $ex) { http_response_code(500); exit('خطای دیتابیس: ' . e($ex->getMessage()) . ' — پوشهٔ ' . e(CMS_DATA) . ' باید قابل نوشتن و pdo_sqlite فعال باشد.'); }
+catch (Throwable $ex) { error_log('cms install db: ' . $ex->getMessage()); http_response_code(500); exit('خطای دیتابیس؛ قابل‌نوشتن‌بودن پوشهٔ داده و فعال‌بودن pdo_sqlite را بررسی کنید (جزئیات در error_log هاست).'); }
 if ($n > 0) { header('Location: /admin/'); exit; }
 
 $err = '';
@@ -19,13 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $un = trim((string)($_POST['username'] ?? '')); $name = trim((string)($_POST['name'] ?? ''));
     $pw = (string)($_POST['password'] ?? ''); $pw2 = (string)($_POST['password2'] ?? '');
     if (too_many_attempts()) $err = 'تلاش‌های ناموفق زیاد بود؛ ۱۵ دقیقه بعد دوباره امتحان کنید.';
-    elseif (!hash_equals(INSTALL_CODE, trim((string)($_POST['code'] ?? '')))) { db()->prepare('INSERT INTO attempts(ip,ts) VALUES(?,?)')->execute([client_ip(), now()]); $err = 'کد نصب درست نیست.'; }
+    elseif (!hash_equals($INSTALL_CODE, trim((string)($_POST['code'] ?? '')))) { db()->prepare('INSERT INTO attempts(ip,ts) VALUES(?,?)')->execute([client_ip(), now()]); $err = 'کد نصب درست نیست.'; }
     elseif (!preg_match('/^[A-Za-z0-9_.-]{3,30}$/', $un) || $name === '') $err = 'نام کاربری (۳ تا ۳۰ حرف لاتین/عدد) و نام الزامی است.';
     elseif (mb_strlen($pw) < 10) $err = 'رمز عبور حداقل ۱۰ نویسه باشد.';
     elseif ($pw !== $pw2) $err = 'تکرار رمز با رمز یکی نیست.';
     else {
         db()->prepare('INSERT INTO users(username,name,email,role,pass,created) VALUES(?,?,?,?,?,?)')
             ->execute([$un, $name, trim((string)($_POST['email'] ?? '')), 'admin', password_hash($pw, PASSWORD_DEFAULT), now()]);
+        @unlink(CMS_DATA . '/install-code.txt');   // کد یک‌بارمصرف است
         header('Location: /admin/?a=login'); exit;
     }
 }

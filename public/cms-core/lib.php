@@ -6,6 +6,7 @@ define('CMS_ROOT', dirname(__DIR__));                 // public_html
 define('CMS_UPLOADS', CMS_ROOT . '/uploads');
 $__parent = dirname(CMS_ROOT);
 define('CMS_DATA', (is_dir($__parent) && is_writable($__parent)) ? $__parent . '/cms_data' : CMS_ROOT . '/cms-data');
+const SITE_HOST = 'websiteco.ir';   // دامنهٔ اصلی؛ به‌جای HTTP_HOST (که مهاجم می‌تواند جعل کند) در canonical، نقشه و ایمیل استفاده می‌شود
 const LANGS = ['fa' => 'فارسی', 'en' => 'English', 'ru' => 'Русский'];
 const TYPES = [
     'post'    => ['label' => 'نوشته‌ها',      'one' => 'نوشته',     'icon' => '✎'],
@@ -176,15 +177,47 @@ function too_many_attempts(): bool {
     $s = db()->prepare('SELECT COUNT(*) FROM attempts WHERE ip=?'); $s->execute([client_ip()]);
     return (int)$s->fetchColumn() >= 8;
 }
+/** سقف درخواست برای هر آی‌پی در یک بازهٔ کوتاه (برای فرم تماس و …). true یعنی از سقف گذشته؛ وگرنه همین درخواست هم شمرده می‌شود.
+    ردیف‌های attempts بعد از ۱۵ دقیقه پاک می‌شوند، پس بازه حداکثر ۸۴۰ ثانیه است. */
+function rate_limited(string $bucket, int $max, int $window = 600): bool {
+    $window = min($window, 840);
+    $key = 'rl:' . $bucket . ':' . hash('sha256', client_ip() . app_secret());
+    db()->prepare('DELETE FROM attempts WHERE ts<?')->execute([now() - 900]);
+    $s = db()->prepare('SELECT COUNT(*) FROM attempts WHERE ip=? AND ts>?'); $s->execute([$key, now() - $window]);
+    if ((int)$s->fetchColumn() >= $max) return true;
+    db()->prepare('INSERT INTO attempts(ip,ts) VALUES(?,?)')->execute([$key, now()]);
+    return false;
+}
+/** همهٔ نشست‌های یک کاربر را می‌بندد (بعد از تغییر رمز یا حذف)، به‌جز نشست فعلی اگر توکنش داده شود */
+function kill_user_sessions(int $uid, string $exceptToken = ''): void {
+    $keep = $exceptToken !== '' ? hash('sha256', $exceptToken) : '';
+    db()->prepare('DELETE FROM sessions WHERE json_extract(data, \'$.uid\')=CAST(? AS INTEGER) AND token<>?')->execute([$uid, $keep]);
+}
+/** کد نصب/بازیابی: فایل متنی داخل پوشهٔ داده (خارج از وب). فایل نباشد یا کوتاه باشد، ابزار غیرفعال است. هیچ کدی در مخزن نگه داشته نمی‌شود. */
+function setup_code(string $name): ?string {
+    if (!preg_match('/^[a-z-]+$/', $name)) return null;
+    $f = CMS_DATA . '/' . $name . '.txt';
+    if (!is_file($f)) return null;
+    $c = trim((string)@file_get_contents($f));
+    return strlen($c) >= 16 ? $c : null;
+}
 function login(string $user, string $pass): bool {
     if (too_many_attempts()) return false;
+    // سقف جداگانه برای هر نام کاربری (جلوگیری از حدس رمز از آی‌پی‌های مختلف)
+    $ukey = 'u:' . hash('sha256', mb_strtolower(trim($user)));
+    $c = db()->prepare('SELECT COUNT(*) FROM attempts WHERE ip=?'); $c->execute([$ukey]);
+    if ((int)$c->fetchColumn() >= 30) return false;
     $s = db()->prepare('SELECT * FROM users WHERE username=?'); $s->execute([trim($user)]);
     $u = $s->fetch();
     $ok = $u && password_verify($pass, $u['pass']);
     if (!$u) password_verify($pass, '$2y$10$abcdefghijklmnopqrstuuABCDEFGHIJKLMNOPQRSTUVWXYZ0123'); // زمان یکسان
-    if (!$ok) { db()->prepare('INSERT INTO attempts(ip,ts) VALUES(?,?)')->execute([client_ip(), now()]); return false; }
+    if (!$ok) {
+        $ins = db()->prepare('INSERT INTO attempts(ip,ts) VALUES(?,?)');
+        $ins->execute([client_ip(), now()]); $ins->execute([$ukey, now()]);
+        return false;
+    }
     session_open(['uid' => (int)$u['id']]);
-    db()->prepare('DELETE FROM attempts WHERE ip=?')->execute([client_ip()]);
+    db()->prepare('DELETE FROM attempts WHERE ip=? OR ip=?')->execute([client_ip(), $ukey]);
     if (password_needs_rehash($u['pass'], PASSWORD_DEFAULT)) {
         db()->prepare('UPDATE users SET pass=? WHERE id=?')->execute([password_hash($pass, PASSWORD_DEFAULT), $u['id']]);
     }

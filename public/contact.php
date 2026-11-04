@@ -62,6 +62,7 @@ $cms = __DIR__ . '/cms-core/lib.php';
 if (is_file($cms)) {
     try {
         require_once $cms;
+        if (rate_limited('contact', 5, 600)) done(false, 429);   // حداکثر ۵ پیام در ۱۰ دقیقه برای هر آی‌پی
         db()->prepare('INSERT INTO messages(name,phone,email,subject,message,lang,ref,created) VALUES(?,?,?,?,?,?,?,?)')
             ->execute([$name, $phone, $email, $subject, $message, $lang, $ref, time()]);
         $saved = true;
@@ -70,7 +71,7 @@ if (is_file($cms)) {
     } catch (Throwable $e) { /* اگر پنل مشکل داشت، ایمیل همچنان ارسال می‌شود */ }
 }
 
-$domain = preg_replace('/^www\./', '', preg_replace('/:\d+$/', '', $host));
+$domain = 'websiteco.ir';   // ثابت؛ هدر Host قابل جعل است و داخل هدر ایمیل نباید بیاید
 $mailSubject = mb_encode_mimeheader('[' . $domain . '] ' . ($subject ?: 'Contact') . ' - ' . $name, 'UTF-8', 'B');
 
 $body  = "Name: $name\n";
