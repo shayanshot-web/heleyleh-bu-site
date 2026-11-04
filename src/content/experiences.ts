@@ -17,12 +17,13 @@ export const people: Record<string, Person> = {
   'ali-daryaeinejad': { name: { fa: 'علی دریایی‌نژاد', en: 'Ali Daryaeinejad', ru: 'Али Дарьяинеджад' }, phone: '09176695283' },
   'hossein-hasanebrahimi': { name: { fa: 'حسین حسن‌ابراهیمی', en: 'Hossein Hasanebrahimi', ru: 'Хосейн Хасан-Ибрахими' }, phone: '09177719411' },
   'heydar-bimaki': { name: { fa: 'حیدر بیمکی', en: 'Heydar Bimaki', ru: 'Хейдар Бимаки' }, phone: '09178737122' },
-  'sina-arash': { name: { fa: 'سینا آرش', en: 'Sina Arash', ru: 'Сина Араш' }, phone: '09113814089' },
-  'jafar-dorfeshan': { name: { fa: 'جعفر دورفشان', en: 'Jafar Dorfeshan', ru: 'Джафар Дурфешан' }, phone: '09171710056' },
+  'sina-arash': { name: { fa: 'سینا آرش', en: 'Sina Arash', ru: 'Сина Араш' }, phone: '09113814089', photo: 'sina-arash.webp' },
+  'jafar-dorfeshan': { name: { fa: 'جعفر دورفشان', en: 'Jafar Dorfeshan', ru: 'Джафар Дурфешан' }, phone: '09171710056', photo: 'jafar-dorfeshan.webp' },
   'ali-khajeh': { name: { fa: 'علی خواجه', en: 'Ali Khajeh', ru: 'Али Хаджех' }, phone: '09171753730' },
-  'amirreza-rahbar': { name: { fa: 'امیررضا رهبر', en: 'Amirreza Rahbar', ru: 'Амирреза Рахбар' }, phone: '09376037139' },
-  'reza-mousavi': { name: { fa: 'سید رضا موسوی', en: 'Seyed Reza Mousavi', ru: 'Сейед Реза Мусави' }, phone: '09176008569' },
-  'hossein-khezri': { name: { fa: 'حسین خضری', en: 'Hossein Khezri', ru: 'Хосейн Хезри' }, phone: '09357173166' },
+  'amirreza-rahbar': { name: { fa: 'امیررضا رهبر', en: 'Amirreza Rahbar', ru: 'Амирреза Рахбар' }, phone: '09376037139', photo: 'amirreza-rahbar.webp' },
+  'reza-mousavi': { name: { fa: 'سید رضا موسوی', en: 'Seyed Reza Mousavi', ru: 'Сейед Реза Мусави' }, phone: '09176008569', photo: 'reza-mousavi.webp' },
+  'hossein-khezri': { name: { fa: 'حسین خضری', en: 'Hossein Khezri', ru: 'Хосейн Хезри' }, phone: '09357173166', photo: 'hossein-khezri.webp' },
+  'mehdi-ansari': { name: { fa: 'مهدی انصاری', en: 'Mehdi Ansari', ru: 'Мехди Ансари' }, photo: 'mehdi-ansari.webp' },
 };
 
 export type ExpIconName =
