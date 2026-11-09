@@ -9,6 +9,7 @@ import LocalEvents from './LocalEvents';
 import Messengers from './Messengers';
 import Comments from './Comments';
 import ShopProducts from './ShopProducts';
+import BookShelf from './BookShelf';
 import { ExperiencesGrid, ExperiencesTeaser } from './ExperiencesView';
 import { TileArt, type TileArtName } from './TileArt';
 import { HeroScene, Icon, WaveEdge, type IconName } from './Art';
@@ -264,6 +265,11 @@ export function PageView({ lang, id }: { lang: Lang; id: InnerPageId }) {
           <div className="prose" style={{ paddingBlock: '24px 0' }}>
             <Sections sections={p.sections} />
           </div>
+        </div>
+      ) : null}
+      {id === 'about' ? (
+        <div className="container">
+          <BookShelf lang={lang} />
         </div>
       ) : null}
       {id === 'gallery' ? (
