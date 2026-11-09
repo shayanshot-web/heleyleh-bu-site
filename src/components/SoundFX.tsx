@@ -387,8 +387,28 @@ export default function SoundFX({ onLabel, offLabel, hint }: { onLabel: string; 
     window.addEventListener('pointerdown', unlock, { once: true });
     window.addEventListener('keydown', unlock, { once: true });
 
+    // روی لمس‌صفحه «هاور» وجود ندارد، ولی مرورگر با شروع هر لمس/اسکرول رویداد pointerover را روی چیزی که زیر انگشت است می‌فرستد
+    // (مثلاً بخش بزرگ بالای صفحه که صدای موج دارد). پس برای لمس فقط «ضربهٔ عمدی» روی دکمه/پیوند صدا دارد.
+    let lastType = '';
+    const track = (e: PointerEvent) => {
+      lastType = e.pointerType;
+    };
+    const tap = (e: MouseEvent) => {
+      if (!onRef.current) return;
+      const type = (e as PointerEvent).pointerType || lastType;
+      if (type !== 'touch') return;
+      const target = e.target as Element | null;
+      const el = target && target.closest ? target.closest('[data-sound]') : null;
+      if (!el || !el.matches('a, button, [role="button"]')) return; // کلیک روی پس‌زمینه/بخش‌های بزرگ بی‌صدا
+      const now = performance.now();
+      if (now - lastRef.current.t < 140) return;
+      lastRef.current.t = now;
+      play(el.getAttribute('data-sound') || 'drop');
+    };
     const over = (e: Event) => {
       if (!onRef.current) return;
+      if (e.type === 'pointerover' && (e as PointerEvent).pointerType === 'touch') return; // لمس/اسکرول صدا نمی‌سازد
+      if (e.type === 'focusin' && lastType === 'touch') return; // فوکوس ناشی از ضربه را خود tap پوشش می‌دهد
       const target = e.target as Element | null;
       const el = target && target.closest ? target.closest('[data-sound]') : null;
       if (!el) {
@@ -417,11 +437,15 @@ export default function SoundFX({ onLabel, offLabel, hint }: { onLabel: string; 
       lastRef.current.el = null;
       stopVoice();
     };
+    document.addEventListener('pointerdown', track, { passive: true, capture: true });
+    document.addEventListener('click', tap, { passive: true });
     document.addEventListener('pointerover', over, { passive: true });
     document.addEventListener('pointerout', out, { passive: true });
     document.addEventListener('focusin', over);
     document.addEventListener('focusout', blur);
     return () => {
+      document.removeEventListener('pointerdown', track, true);
+      document.removeEventListener('click', tap);
       document.removeEventListener('pointerover', over);
       document.removeEventListener('pointerout', out);
       document.removeEventListener('focusin', over);
