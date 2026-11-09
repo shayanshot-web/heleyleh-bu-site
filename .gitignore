@@ -7,3 +7,13 @@ out
 # build artifacts
 tsconfig.tsbuildinfo
 next-env.d.ts
+
+# رازها و داده‌های پنل هرگز در مخزن نباشند
+.env
+.env.*
+*.sqlite
+*.sqlite3
+cms_data/
+cms-data/
+install-code.txt
+recovery-code.txt

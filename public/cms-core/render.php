@@ -79,7 +79,7 @@ function cms_render_request(): void {
     $tplFile = CMS_ROOT . '/' . ($lang === 'fa' ? '' : $lang . '/') . SECTIONS[$lang][$section] . '/index.html';
     if (!is_file($tplFile)) cms_404();
     $tpl = (string)file_get_contents($tplFile);
-    $host = $_SERVER['HTTP_HOST'] ?? 'websiteco.ir';
+    $host = SITE_HOST;   // نه HTTP_HOST: هدر Host قابل جعل است
     $u = UI[$lang];
     $type = SECTION_TYPES[$section] ?? null;
     $title = null; $desc = ''; $main = null; $canon = cms_url($lang, $section);
@@ -213,7 +213,7 @@ function cms_search_index(): void {
 }
 
 function cms_sitemap(): void {
-    $host = preg_replace('/^www\./', '', $_SERVER['HTTP_HOST'] ?? 'websiteco.ir');
+    $host = SITE_HOST;
     header('Content-Type: application/xml; charset=utf-8');
     echo '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
     foreach (SECTION_TYPES as $section => $type) {

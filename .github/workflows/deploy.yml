@@ -5,15 +5,28 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# حداقل دسترسی برای توکن گیت‌هاب (این workflow فقط کد را می‌خواند)
+permissions:
+  contents: read
+
+# دو دیپلوی هم‌زمان روی FTP نباید روی هم بنویسند
+concurrency:
+  group: deploy-cpanel
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install --no-audit --no-fund
+      # نسخهٔ دقیق وابستگی‌ها از package-lock.json (جلوگیری از ورود نسخهٔ آلوده در لحظهٔ بیلد)
+      - run: npm ci --no-audit --no-fund
       - run: npm run build
       - name: Write build marker
         run: echo "commit ${GITHUB_SHA} built at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > out/build.txt
@@ -34,3 +47,5 @@ jobs:
             **/.git*
             **/.git*/**
             uploads/**
+            cms-data/**
+            cms_data/**

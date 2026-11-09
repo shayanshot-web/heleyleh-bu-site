@@ -45,14 +45,29 @@ ExpiresByType image/webp "access plus 1 month"
 ExpiresByType text/html "access plus 0 seconds"
 </IfModule>
 
-# هدرهای امنیتی ساده
+# ---- هدرهای امنیتی ----
 <IfModule mod_headers.c>
 Header always set X-Content-Type-Options "nosniff"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set X-Frame-Options "SAMEORIGIN"
+# فقط HTTPS (۱۸۰ روز؛ بدون includeSubDomains و preload تا اگر جایی SSL نداشتید مشکل نشود)
+Header always set Strict-Transport-Security "max-age=15552000"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+# پایهٔ CSP: جلوگیری از قرارگرفتن سایت در iframe دیگران، تغییر base، پلاگین‌ها و ارسال فرم به بیرون (بدون محدودکردن اسکریپت/تصویر؛ آن را بدون تست روی هاست نمی‌شود سخت‌تر کرد)
+Header always set Content-Security-Policy "frame-ancestors 'self'; base-uri 'self'; object-src 'none'; form-action 'self'"
+Header always unset X-Powered-By
 </IfModule>
 
-# فایل وضعیت دیپلوی خودکار از وب قابل دسترس نباشد
-<Files ".ftp-deploy-sync-state.json">
+# ---- فایل‌هایی که نباید از وب باز شوند ----
+# فایل‌های نقطه‌دار (مثل .ftp-deploy-sync-state.json؛ پوشهٔ .well-known جداست و مشمول نمی‌شود)
+<FilesMatch "^\.">
 Require all denied
-</Files>
+</FilesMatch>
+# دیتابیس، لاگ، بک‌آپ، تنظیمات و فایل‌های موقت ویرایشگر
+<FilesMatch "\.(sqlite|sqlite3|db|sql|bak|log|env|ini|lock|swp|orig|old)$">
+Require all denied
+</FilesMatch>
+# از فایل‌های PHP فقط نقطه‌های ورود مجاز است (admin/xp.php، admin/views.php و … مستقیم باز نمی‌شوند؛ cms-core هم جداگانه بسته است)
+<FilesMatch "^(?!(index|dynamic|contact|comments|install|reset-admin)\.php$).*\.php$">
+Require all denied
+</FilesMatch>
