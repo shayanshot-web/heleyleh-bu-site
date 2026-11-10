@@ -267,7 +267,7 @@ export function PageView({ lang, id }: { lang: Lang; id: InnerPageId }) {
           </div>
         </div>
       ) : null}
-      {id === 'about' ? (
+      {id === 'blog' ? (
         <div className="container">
           <BookShelf lang={lang} />
         </div>
