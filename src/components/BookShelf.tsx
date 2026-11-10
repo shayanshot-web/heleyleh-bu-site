@@ -201,13 +201,12 @@ export default function BookShelf({ lang }: { lang: Lang }) {
 
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
-  if (!books.length) return null;
-
   const shelves: { book: Book; idx: number }[][] = [];
   books.forEach((book, idx) => {
     const r = Math.floor(idx / PER_SHELF);
     (shelves[r] ||= []).push({ book, idx });
   });
+  if (!shelves.length) shelves.push([]);
   const selIdx = books.findIndex((b) => b.id === selId);
   const sel = selIdx >= 0 ? books[selIdx] : null;
   const selColor = sel ? colorOf(sel, selIdx) : '#0a3e66';
@@ -263,6 +262,7 @@ export default function BookShelf({ lang }: { lang: Lang }) {
                     </button>
                   );
                 })}
+                {!books.length ? <p className="bs-empty">{ui.empty}</p> : null}
                 {r === 1 ? <PlantSmall /> : null}
               </div>
               <div className="bs-board" aria-hidden="true" />

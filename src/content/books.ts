@@ -9,7 +9,7 @@ import type { Lang } from './types';
  *     اگر جلد نباشد، جلدی گرافیکی با رنگ `color` ساخته می‌شود.
  *  3. فقط فیلدهایی را پر کنید که دارید؛ هر چیزی که خالی باشد در صفحه نمایش داده نمی‌شود.
  *
- * تا وقتی `books` خالی است، کل بخش کتابخانه در سایت دیده نمی‌شود.
+ * تا وقتی `books` خالی است، قفسهٔ خالی با پیام «به‌زودی» نمایش داده می‌شود.
  */
 
 /** متن چندزبانه؛ فارسی لازم است و اگر انگلیسی/روسی نبود، فارسی نمایش داده می‌شود */
@@ -122,6 +122,7 @@ export interface BookUi {
   address: string;
   buy: string;
   buyNote: string;
+  empty: string;
 }
 
 export const bookUi: Record<Lang, BookUi> = {
@@ -155,6 +156,7 @@ export const bookUi: Record<Lang, BookUi> = {
     address: 'نشانی',
     buy: 'خرید آنلاین',
     buyNote: 'پیوند فروشگاه‌ها در پنجرهٔ تازه باز می‌شود.',
+    empty: 'کتاب‌های نشر هلیله به‌زودی روی این قفسه قرار می‌گیرند.',
   },
   en: {
     title: 'Helileh Publishing library',
@@ -186,6 +188,7 @@ export const bookUi: Record<Lang, BookUi> = {
     address: 'Address',
     buy: 'Buy online',
     buyNote: 'Store links open in a new tab.',
+    empty: 'Helileh Publishing books will be placed on this shelf soon.',
   },
   ru: {
     title: 'Библиотека издательства «Хелиле»',
@@ -217,5 +220,6 @@ export const bookUi: Record<Lang, BookUi> = {
     address: 'Адрес',
     buy: 'Купить онлайн',
     buyNote: 'Ссылки на магазины откроются в новой вкладке.',
+    empty: 'Книги издательства «Хелиле» скоро появятся на этой полке.',
   },
 };
