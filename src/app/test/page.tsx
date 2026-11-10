@@ -1,21 +1,19 @@
 import type { Metadata } from 'next';
-import Shell from '@/components/Shell';
-import { View } from '@/components/Views';
-import { metaFor } from '@/lib/seo';
-import type { Route } from '@/lib/i18n';
 
-/** نسخهٔ اصلی سایت روی websiteco.ir/test تا زمان انتشار نهایی */
-const route: Route = { kind: 'home', lang: 'fa' };
-
+/** آدرس آزمایشی قدیمی websiteco.ir/test به صفحهٔ اصلی می‌رود */
 export const metadata: Metadata = {
-  ...metaFor(route),
-  robots: { index: false, follow: false },
+  title: 'هلیله باستانی، بوشهر',
+  robots: { index: false, follow: true },
+  alternates: { canonical: '/' },
 };
 
 export default function TestHome() {
   return (
-    <Shell route={route}>
-      <View route={route} />
-    </Shell>
+    <>
+      <meta httpEquiv="refresh" content="0;url=/" />
+      <p style={{ textAlign: 'center', padding: '3rem 1rem', fontFamily: 'sans-serif' }}>
+        <a href="/">رفتن به صفحهٔ اصلی هلیله باستانی</a>
+      </p>
+    </>
   );
 }
