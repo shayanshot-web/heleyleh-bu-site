@@ -169,6 +169,39 @@ function Contacts({ ui, lang }: { ui: BookUi; lang: Lang }) {
 
 /* ---------- کتابخانه + میز تحریر ---------- */
 
+/** فنجان چای با بخار متحرک روی میز تحریر */
+function Teacup() {
+  return (
+    <svg className="bs-tea" viewBox="0 0 90 84" aria-hidden="true" focusable="false">
+      <g className="bs-steam" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" opacity="0.7">
+        <path className="s1" d="M34 30c-5-6 5-9 0-16" />
+        <path className="s2" d="M46 30c-5-6 5-9 0-18" />
+        <path className="s3" d="M58 30c-5-6 5-9 0-14" />
+      </g>
+      <ellipse cx="45" cy="74" rx="38" ry="8" fill="#1c0f06" opacity="0.28" />
+      <ellipse cx="45" cy="68" rx="34" ry="8" fill="#f4ece0" stroke="#c9b48e" strokeWidth="1.5" />
+      <path d="M20 36h50c0 18-8 32-25 32S20 54 20 36z" fill="#fffaf0" stroke="#c9b48e" strokeWidth="1.5" />
+      <path d="M70 41c11-2 11 14-1 15" fill="none" stroke="#c9b48e" strokeWidth="4" strokeLinecap="round" />
+      <ellipse cx="45" cy="36" rx="25" ry="5" fill="#9a4a1d" />
+      <path d="M24 48h42" stroke="#0a6fb5" strokeWidth="3" opacity="0.55" />
+    </svg>
+  );
+}
+
+/** قلم روی میز */
+function Pen() {
+  return (
+    <svg className="bs-pen" viewBox="0 0 160 24" aria-hidden="true" focusable="false">
+      <path d="M6 12l22-6v12z" fill="#e9d3a3" />
+      <path d="M2 12l6-2v4z" fill="#222" />
+      <rect x="28" y="6" width="112" height="12" rx="6" fill="#0a3e66" />
+      <rect x="28" y="6" width="112" height="4" rx="2" fill="#fff" opacity="0.2" />
+      <rect x="100" y="6" width="5" height="12" fill="#d9a441" />
+      <path d="M140 9l16 1v4l-16 1z" fill="#d9a441" />
+    </svg>
+  );
+}
+
 export default function BookShelf({ lang }: { lang: Lang }) {
   const ui = bookUi[lang];
   const [selId, setSelId] = useState<string | null>(null);
@@ -282,7 +315,9 @@ export default function BookShelf({ lang }: { lang: Lang }) {
             </div>
           ))}
         </div>
-        <div className="bs-plinth" aria-hidden="true" />
+        <div className="bs-plinth" aria-hidden="true">
+          <span className="bs-plaque">{pick(publisher.name, lang)}</span>
+        </div>
       </div>
 
       {sel ? (
@@ -309,6 +344,8 @@ export default function BookShelf({ lang }: { lang: Lang }) {
             <div className="bs-desk-plant" aria-hidden="true">
               <PlantSmall />
             </div>
+            <Teacup />
+            <Pen />
 
             <div className={`b3-stage${open ? ' is-open' : ''}`} key={sel.id} style={{ '--c': selColor, '--bk-ink': inkOn(selColor) } as CSSProperties}>
               <div className="b3-shadow" aria-hidden="true" />
@@ -348,6 +385,7 @@ export default function BookShelf({ lang }: { lang: Lang }) {
                   ) : null}
                 </div>
 
+                <span className="b3-ribbon" aria-hidden="true" />
                 <div className="b3-cover">
                   {/* کلیک روی جلد فقط میان‌بُر ماوس است؛ کنترل دسترسی‌پذیر همان دکمهٔ بالای میز است */}
                   <div className="b3-front" aria-hidden="true" onClick={() => setOpen(true)}>
