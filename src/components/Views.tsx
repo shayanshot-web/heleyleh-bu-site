@@ -10,6 +10,7 @@ import Messengers from './Messengers';
 import Comments from './Comments';
 import ShopProducts from './ShopProducts';
 import BookShelf from './BookShelf';
+import LibraryTeaser from './LibraryTeaser';
 import { ExperiencesGrid, ExperiencesTeaser } from './ExperiencesView';
 import { TileArt, type TileArtName } from './TileArt';
 import { HeroScene, Icon, WaveEdge, type IconName } from './Art';
@@ -156,6 +157,8 @@ export function HomeView({ lang }: { lang: Lang }) {
       </section>
 
       <ExperiencesTeaser lang={lang} />
+
+      <LibraryTeaser lang={lang} />
 
       <section className="section">
         <div className="container">
