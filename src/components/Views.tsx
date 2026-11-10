@@ -207,6 +207,11 @@ export function PageView({ lang, id }: { lang: Lang; id: InnerPageId }) {
   return (
     <>
       <PageHero title={p.title} lead={p.lead} icon={pageIcons[id]} lang={lang} />
+      {id === 'blog' ? (
+        <div className="container">
+          <BookShelf lang={lang} />
+        </div>
+      ) : null}
       <div className={id === 'events' ? 'container prose prose-wide' : 'container prose'}>
         {id === 'blog' ? (
           <BlogList lang={lang} />
@@ -265,11 +270,6 @@ export function PageView({ lang, id }: { lang: Lang; id: InnerPageId }) {
           <div className="prose" style={{ paddingBlock: '24px 0' }}>
             <Sections sections={p.sections} />
           </div>
-        </div>
-      ) : null}
-      {id === 'blog' ? (
-        <div className="container">
-          <BookShelf lang={lang} />
         </div>
       ) : null}
       {id === 'gallery' ? (

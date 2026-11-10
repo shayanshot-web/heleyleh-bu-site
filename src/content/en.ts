@@ -14,7 +14,7 @@ export const en: Dict = {
     stay: 'Stay',
     experiences: 'Experiences & people',
     gallery: 'Gallery',
-    blog: 'Blog',
+    blog: 'Library',
     events: 'Events',
     shop: 'Handicrafts',
     attractions: 'Attractions',
@@ -148,8 +148,8 @@ export const en: Dict = {
       ],
     },
     blog: {
-      title: 'Blog',
-      lead: 'Travel advice, stories about local crafts and local news in one place.',
+      title: 'Library',
+      lead: 'Books from Helileh Publishing, and below them the Helileh blog: travel advice, local crafts and news.',
       sections: [],
     },
     events: {
