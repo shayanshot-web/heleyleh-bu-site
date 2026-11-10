@@ -20,7 +20,7 @@ const pageIcons: Record<InnerPageId, IconName> = {
   stay: 'stay',
   experiences: 'experiences',
   gallery: 'gallery',
-  blog: 'blog',
+  blog: 'library',
   events: 'events',
   shop: 'shop',
   attractions: 'attractions',

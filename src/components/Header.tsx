@@ -9,6 +9,8 @@ export interface NavItem {
   label: string;
   href: string;
   icon: IconName;
+  /** صدایی که با کلیک پخش می‌شود (مثلاً ورق زدن کتاب) */
+  clickSound?: string;
 }
 export interface LangItem {
   code: string;
@@ -67,6 +69,7 @@ export default function Header(p: Props) {
                 <Link
                   href={i.href}
                   data-sound="tick"
+                  data-click-sound={i.clickSound}
                   aria-current={active(i.href) ? 'page' : undefined}
                   onClick={() => setOpen(false)}
                 >

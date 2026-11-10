@@ -13,6 +13,7 @@ export type IconName =
   | 'experiences'
   | 'gallery'
   | 'blog'
+  | 'library'
   | 'events'
   | 'shop'
   | 'contact'
@@ -97,6 +98,20 @@ const icons: Record<IconName, ReactNode> = {
     <>
       <path className="f" d="M12 8h18l8 8v24H12z" />
       <path d="M30 8v8h8M18 24h14M18 30h14M18 36h8" />
+    </>
+  ),
+  /* قفسهٔ کتاب: کتابخانه */
+  library: (
+    <>
+      <path d="M6 40h36" />
+      <rect className="f" x="9" y="15" width="8" height="25" rx="1.5" />
+      <path d="M11.5 21h3M11.5 34h3" />
+      <rect className="f" x="19" y="9" width="9" height="31" rx="1.5" />
+      <path d="M21.5 16h4M21.5 33h4" />
+      <g className="a-lean">
+        <rect className="f" x="30" y="13" width="8" height="27" rx="1.5" />
+        <path d="M32.5 19h3" />
+      </g>
     </>
   ),
   /* تقویم */
