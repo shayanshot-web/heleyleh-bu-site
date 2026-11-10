@@ -2703,7 +2703,7 @@ img, svg, video { max-width: 100%; }
   transform: translateZ(calc(var(--d) / 2));
 }
 .bk-spine::before { content: ''; position: absolute; inset-inline: 0; top: 7px; height: 3px; background: currentColor; opacity: 0.45; }
-.bk-t { writing-mode: vertical-rl; font-weight: 800; font-size: 0.86rem; line-height: 1.25; max-height: calc(var(--h) - 60px); overflow: hidden; text-overflow: ellipsis; }
+.bk-t { writing-mode: vertical-rl; font-weight: 800; font-size: var(--tfs, 0.86rem); line-height: 1.25; max-height: calc(var(--h) - 60px); overflow: hidden; text-overflow: ellipsis; }
 .bk-a { writing-mode: vertical-rl; font-size: 0.62rem; opacity: 0.8; max-height: 36px; overflow: hidden; }
 .bk-edge {
   top: 0;

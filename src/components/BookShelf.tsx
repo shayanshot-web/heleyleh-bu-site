@@ -11,6 +11,18 @@ const PALETTE = ['#0a3e66', '#0a6fb5', '#1b6b6f', '#7a2e2e', '#c9962b', '#5b6b3a
 const HEIGHTS = [172, 156, 184, 164, 178, 150, 190, 160];
 const WIDTHS = [46, 38, 52, 42, 48, 36, 54, 40];
 const PER_SHELF = 6;
+/** +989171731776 را به شکل خوانا و محلی 0917 173 1776 نشان می‌دهد */
+const phoneShown = (ph: string) => {
+  const d = ph.replace(/\D/g, '');
+  return /^989\d{9}$/.test(d) ? `0${d.slice(2, 5)} ${d.slice(5, 8)} ${d.slice(8)}` : ph;
+};
+/** عرض عطف را از طول عنوان حساب می‌کنیم تا عنوان‌های بلند چند ستونه و کامل خوانا بمانند */
+const spineW = (t: string) => {
+  const long = t.length > 22;
+  const perCol = long ? 13 : 10;
+  const lineW = long ? 14 : 18;
+  return Math.min(96, 30 + Math.ceil(t.length / perCol) * lineW);
+};
 
 const safeHttps = (u?: string) => !!u && /^https:\/\/[^\s"'<>]+$/i.test(u);
 const safeFile = (f?: string) => !!f && /^[\w.-]+$/.test(f);
@@ -130,7 +142,7 @@ function Specs({ book, ui, lang }: { book: Book; ui: BookUi; lang: Lang }) {
 function Contacts({ ui, lang }: { ui: BookUi; lang: Lang }) {
   const p = publisher;
   const items: { k: string; label: string; href?: string; ltr?: boolean; ext?: boolean }[] = [];
-  if (p.phone && digits(p.phone)) items.push({ k: 'call', label: `${ui.call}: ${p.phone}`, href: `tel:+${digits(p.phone)}`, ltr: true });
+  if (p.phone && digits(p.phone)) items.push({ k: 'call', label: `${ui.call}: \u2066${phoneShown(p.phone)}\u2069`, href: `tel:+${digits(p.phone)}` });
   if (digits(p.whatsapp)) items.push({ k: 'wa', label: ui.whatsapp, href: `https://wa.me/${digits(p.whatsapp)}`, ext: true });
   if (safeUser(p.telegram)) items.push({ k: 'tg', label: ui.telegram, href: `https://t.me/${p.telegram}`, ext: true });
   if (safeUser(p.instagram)) items.push({ k: 'ig', label: ui.instagram, href: `https://instagram.com/${p.instagram}`, ext: true });
@@ -244,7 +256,8 @@ export default function BookShelf({ lang }: { lang: Lang }) {
                         {
                           '--c': color,
                           '--bk-ink': inkOn(color),
-                          '--w': `${WIDTHS[idx % WIDTHS.length]}px`,
+                          '--w': `${Math.max(WIDTHS[idx % WIDTHS.length], spineW(pick(book.title, lang)))}px`,
+                          '--tfs': pick(book.title, lang).length > 22 ? '0.72rem' : '0.86rem',
                           '--h': `${HEIGHTS[idx % HEIGHTS.length]}px`,
                         } as CSSProperties
                       }
