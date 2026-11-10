@@ -2936,3 +2936,57 @@ img, svg, video { max-width: 100%; }
 .a-lean { transform-box: fill-box; transform-origin: 100% 100%; transition: transform .35s cubic-bezier(.3,1.5,.5,1); }
 .site-nav a:is(:hover, :focus-visible) .a-lean { transform: rotate(14deg); }
 @media (prefers-reduced-motion: reduce) { .a-lean { transition: none; } }
+
+/* ---------- معرفی نشر هلیله در صفحهٔ اصلی ---------- */
+.lt-section { padding-block: 56px; }
+.lt-card {
+  display: grid; grid-template-columns: 200px 1fr; align-items: center; gap: 32px;
+  padding: 32px 40px; border-radius: 28px; text-decoration: none; color: #f6ecd8;
+  background:
+    radial-gradient(120% 140% at 15% 0%, rgba(217, 199, 166, 0.22), transparent 55%),
+    linear-gradient(135deg, #3b2616 0%, #5a3a22 55%, #2b1a0f 100%);
+  box-shadow: 0 18px 40px rgba(43, 26, 15, 0.28), inset 0 0 0 2px rgba(217, 199, 166, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.lt-card:is(:hover, :focus-visible) { transform: translateY(-4px); box-shadow: 0 24px 48px rgba(43, 26, 15, 0.36), inset 0 0 0 2px rgba(217, 199, 166, 0.5); }
+.lt-card:focus-visible { outline: 3px solid var(--sand); outline-offset: 4px; }
+.lt-body h2 { margin: 0 0 8px; color: #fff; font-size: clamp(1.5rem, 3vw, 2rem); }
+.lt-quote { margin: 0 0 10px; font-size: clamp(1.1rem, 2.2vw, 1.35rem); line-height: 1.9; color: var(--sand); font-weight: 700; }
+.lt-text { margin: 0 0 18px; line-height: 1.9; max-width: 52ch; opacity: 0.92; }
+.lt-cta { display: inline-block; padding: 10px 22px; border-radius: 999px; background: var(--sand); color: #3b2616; font-weight: 800; transition: transform 0.25s ease; }
+.lt-card:is(:hover, :focus-visible) .lt-cta { transform: scale(1.05); }
+
+.lt-art { position: relative; display: block; width: 200px; height: 190px; perspective: 800px; color: #7fc4a0; direction: ltr; }
+.lt-book { position: absolute; inset: 44px 6px 46px; transform-style: preserve-3d; transform: rotateX(24deg); animation: ltFloat 5s ease-in-out infinite; }
+.lt-cover { position: absolute; inset: -7px -8px -9px; border-radius: 8px; background: linear-gradient(135deg, #0a6fb5, #0a3e66); box-shadow: 0 14px 26px rgba(0, 0, 0, 0.5); }
+.lt-half {
+  position: absolute; top: 0; bottom: 0; width: 50%; background:
+    repeating-linear-gradient(0deg, transparent 0 13px, rgba(10, 62, 102, 0.16) 13px 14px) 12px 14px / calc(100% - 24px) calc(100% - 28px) no-repeat,
+    linear-gradient(90deg, #efe3c9, #fbf5e6);
+}
+.lt-hl { left: 0; border-radius: 4px 0 0 4px; background-image: repeating-linear-gradient(0deg, transparent 0 13px, rgba(10, 62, 102, 0.16) 13px 14px), linear-gradient(90deg, #fbf5e6, #e6d8b8); }
+.lt-hr { right: 0; border-radius: 0 4px 4px 0; }
+.lt-page {
+  position: absolute; top: 2px; bottom: 2px; left: 50%; width: 50%; border-radius: 0 4px 4px 0; transform-origin: left center;
+  background: linear-gradient(90deg, #e9dcbd, #fffaf0); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  animation: ltTurn 4.8s ease-in-out infinite;
+}
+.lt-p2 { animation-delay: 0.4s; }
+.lt-p3 { animation-delay: 0.8s; }
+.lt-wave { position: absolute; inset-inline: 40px; bottom: 6px; color: #5fb4e6; animation: ltWave 3s ease-in-out infinite; }
+.lt-leaf { position: absolute; opacity: 0.9; animation: ltLeaf 6s ease-in-out infinite; }
+.lt-l1 { top: 8px; right: 14px; }
+.lt-l2 { top: 30px; left: 6px; animation-delay: 1.8s; }
+.lt-card:is(:hover, :focus-visible) .lt-page { animation-duration: 1.8s; }
+@keyframes ltTurn { 0%, 10% { transform: rotateY(0); } 40%, 62% { transform: rotateY(-178deg); } 100% { transform: rotateY(0); } }
+@keyframes ltFloat { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+@keyframes ltWave { 0%, 100% { translate: -6px 0; } 50% { translate: 6px 0; } }
+@keyframes ltLeaf { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 4px -10px; rotate: 18deg; } }
+@media (prefers-reduced-motion: reduce) {
+  .lt-book, .lt-page, .lt-wave, .lt-leaf { animation: none; }
+  .lt-p1 { transform: rotateY(-70deg); }
+}
+@media (max-width: 720px) {
+  .lt-card { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 28px 22px; gap: 14px; }
+  .lt-text { margin-inline: auto; }
+}
