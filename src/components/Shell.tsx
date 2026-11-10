@@ -24,13 +24,13 @@ const navOrder: PageId[] = [
   'home',
   'about',
   'experiences',
+  'blog',
+  'events',
   'attractions',
   'stay',
   'restaurants',
   'gallery',
-  'events',
   'shop',
-  'blog',
   'contact',
 ];
 const navIcons: Record<PageId, IconName> = {
