@@ -43,14 +43,14 @@ const navIcons: Record<PageId, IconName> = {
   gallery: 'gallery',
   events: 'events',
   shop: 'shop',
-  blog: 'blog',
+  blog: 'library',
   contact: 'contact',
 };
 
 export default function Shell({ route, children }: { route: Route; children: ReactNode }) {
   const lang = route.lang;
   const d = dicts[lang];
-  const items = navOrder.map((id) => ({ label: d.nav[id], href: pagePath(lang, id), icon: navIcons[id] }));
+  const items = navOrder.map((id) => ({ label: d.nav[id], href: pagePath(lang, id), icon: navIcons[id], clickSound: id === 'blog' ? 'flip' : undefined }));
   const switcher = langs.map((l) => ({
     code: l,
     name: dicts[l].langName,

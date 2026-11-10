@@ -270,6 +270,14 @@ const sounds: Record<string, Maker> = {
     hiss(c, o, { type: 'highpass', f: 2500, dur: 0.05, vol: 0.3, attack: 0.002 });
     hiss(c, o, { type: 'highpass', f: 1800, at: 0.07, dur: 0.07, vol: 0.25, attack: 0.002 });
   },
+  /* ورق زدن کتاب: خش کاغذ که بالا می‌رود، یک تق کوچک و ورق بعدی */
+  flip: (c, o) => {
+    hiss(c, o, { type: 'bandpass', f: 1600, to: 5200, q: 0.9, dur: 0.15, vol: 0.2, attack: 0.012 });
+    tone(c, o, { f: 170, at: 0.13, dur: 0.07, vol: 0.05, attack: 0.003 });
+    hiss(c, o, { type: 'highpass', f: 4200, at: 0.14, dur: 0.04, vol: 0.1, attack: 0.002 });
+    hiss(c, o, { type: 'bandpass', f: 2200, to: 6000, q: 1, at: 0.24, dur: 0.13, vol: 0.17, attack: 0.01 });
+    hiss(c, o, { type: 'highpass', f: 4500, at: 0.36, dur: 0.04, vol: 0.08, attack: 0.002 });
+  },
   /* خش قلم */
   blog: (c, o) => {
     for (let i = 0; i < 4; i++) hiss(c, o, { type: 'bandpass', f: 3500 + i * 300, q: 2, at: i * 0.07, dur: 0.06, vol: 0.16, attack: 0.01 });
@@ -404,9 +412,15 @@ export default function SoundFX({ onLabel, offLabel, hint }: { onLabel: string; 
     };
     const tap = (e: MouseEvent) => {
       if (!onRef.current) return;
+      const target = e.target as Element | null;
+      // صدای مخصوص کلیک (مثل ورق زدن کتاب) با موس و لمس هر دو پخش می‌شود
+      const cs = target && target.closest ? target.closest('[data-click-sound]') : null;
+      if (cs) {
+        play(cs.getAttribute('data-click-sound') || 'flip');
+        return;
+      }
       const type = (e as PointerEvent).pointerType || lastType;
       if (type !== 'touch') return;
-      const target = e.target as Element | null;
       const el = target && target.closest ? target.closest('[data-sound]') : null;
       if (!el || !el.matches('a, button, [role="button"]')) return; // کلیک روی پس‌زمینه/بخش‌های بزرگ بی‌صدا
       const now = performance.now();
