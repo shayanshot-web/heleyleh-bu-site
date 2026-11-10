@@ -2929,3 +2929,5 @@ img, svg, video { max-width: 100%; }
   .bk, .b3-stage, .b3-cover, .b3-base { transition: none; }
   .b3-stage { animation: none; }
 }
+
+.bs-empty { align-self: center; margin: 0; padding: 0 12px; max-width: 28ch; text-align: center; font-size: .95rem; line-height: 1.8; color: #ecdcc0; }
