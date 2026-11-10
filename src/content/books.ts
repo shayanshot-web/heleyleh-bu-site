@@ -67,6 +67,7 @@ export const publisher: Publisher = {
   name: { fa: 'نشر هلیله', en: 'Helileh Publishing', ru: 'Издательство «Хелиле»' },
   manager: { fa: 'مهدی انصاری', en: 'Mehdi Ansari', ru: 'Мехди Ансари' },
   phone: '+989171731776',
+  address: { fa: 'بوشهر – روستای گردشگری هلیله', en: 'Bushehr – Helileh tourist village', ru: 'Бушер – туристическая деревня Хелиле' },
   // instagram: '…',
   // website: 'https://…',
 };
