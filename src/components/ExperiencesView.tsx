@@ -33,7 +33,7 @@ function GridCards({ lang }: { lang: Lang }) {
   return (
     <>
       {experiences.map((e) => (
-        <li key={e.id} className="xp-card" data-sound="sea">
+        <li key={e.id} className="xp-card" data-sound="xp">
           <span className="xp-icon">
             <ExpIcon name={e.id} />
           </span>
@@ -81,7 +81,7 @@ function StripItems({ lang }: { lang: Lang }) {
     <>
       {experiences.slice(0, 12).map((e) => (
         <li key={e.id}>
-          <Link href={pagePath(lang, 'experiences')} data-sound="sea">
+          <Link href={pagePath(lang, 'experiences')} data-sound="xp">
             <span className="xp-icon sm">
               <ExpIcon name={e.id} />
             </span>

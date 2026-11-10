@@ -256,6 +256,15 @@ const sounds: Record<string, Maker> = {
     tone(c, o, { f: 1100, type: 'triangle', at: 0.11, dur: 0.05, vol: 0.16, attack: 0.002 });
     tone(c, o, { f: 2400, at: 0.2, dur: 0.5, vol: 0.05, attack: 0.01 });
   },
+  /* آیکن‌ها و کارت‌های تجربه‌ها: زنگ شیشه‌ای کوتاه و دو نُتی (می ← سی، کمتر از نیم ثانیه).
+     نت‌ها سینوسی و نرم‌اند؛ هر کدام یک هارمونیک اکتاو دارد تا شفاف و «گران» شنیده شود، و درخششی ریز آخرش می‌نشیند. */
+  xp: (c, o) => {
+    tone(c, o, { f: 659.3, dur: 0.2, vol: 0.15, attack: 0.004 });
+    tone(c, o, { f: 1318.5, dur: 0.12, vol: 0.035, attack: 0.004 });
+    tone(c, o, { f: 987.8, at: 0.085, dur: 0.3, vol: 0.15, attack: 0.004 });
+    tone(c, o, { f: 1975.5, at: 0.085, dur: 0.16, vol: 0.032, attack: 0.004 });
+    tone(c, o, { f: 2637, at: 0.17, dur: 0.12, vol: 0.022, attack: 0.004 });
+  },
   /* شاتر دوربین */
   gallery: (c, o) => {
     hiss(c, o, { type: 'highpass', f: 2500, dur: 0.05, vol: 0.3, attack: 0.002 });
