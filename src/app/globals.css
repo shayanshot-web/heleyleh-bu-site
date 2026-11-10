@@ -2990,3 +2990,64 @@ img, svg, video { max-width: 100%; }
   .lt-card { grid-template-columns: 1fr; justify-items: center; text-align: center; padding: 28px 22px; gap: 14px; }
   .lt-text { margin-inline: auto; }
 }
+
+/* ======== ارتقای گرافیک کتابخانه و میز تحریر ======== */
+/* قفسه: نور گرم از بالا، سایهٔ تماس کتاب‌ها روی تخته، تزئینات زر روی عطف، پلاک برنجی */
+.bs-body { position: relative; overflow: hidden; }
+.bs-body::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background:
+    radial-gradient(ellipse 60% 38% at 50% 0, rgba(255, 214, 150, 0.2), transparent 70%),
+    linear-gradient(105deg, rgba(255, 255, 255, 0.07) 0, transparent 22%, transparent 70%, rgba(255, 255, 255, 0.04) 100%);
+}
+.bs-row { background: radial-gradient(ellipse 70% 80% at 50% 100%, rgba(255, 190, 110, 0.1), transparent 70%); }
+.bs-board { position: relative; }
+.bs-board::before {
+  content: ''; position: absolute; inset-inline: 0; top: -10px; height: 10px; pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.5));
+}
+.bs-case { background-image: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.045) 0 1px, transparent 1px 7px), linear-gradient(90deg, var(--wood-d), var(--wood) 5%, var(--wood-l) 50%, var(--wood) 95%, var(--wood-d)); }
+.bs-case::after { /* خط برجستهٔ قاب */
+  content: ''; position: absolute; inset: 7px 7px 0; border-radius: 6px 6px 0 0; pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 224, 170, 0.22), inset 0 0 0 3px rgba(0, 0, 0, 0.12);
+}
+.bs-plinth { position: relative; display: grid; place-items: center; height: 30px; }
+.bs-plaque {
+  padding: 2px 22px; border-radius: 4px; font-size: 0.78rem; font-weight: 800; letter-spacing: 0; color: #4a2f10;
+  background: linear-gradient(180deg, #f3dd9b, #c99a3c 55%, #e8c777);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 2px 4px rgba(0, 0, 0, 0.45);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.bk-spine::before { top: 8px; height: 2px; background: #efd790; opacity: 0.85; box-shadow: 0 5px 0 #efd790; }
+.bk-spine::after { content: ''; position: absolute; inset-inline: 0; bottom: 8px; height: 2px; background: #efd790; opacity: 0.85; box-shadow: 0 -5px 0 #efd790; }
+.bk-t { text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35); }
+
+/* میز تحریر: دیوار، نور پنجره، ضخامت کتاب، نوار نشانه، وسایل روی میز */
+.bs-scene {
+  background:
+    radial-gradient(ellipse 55% 60% at 82% 6%, rgba(255, 217, 160, 0.65), transparent 70%),
+    linear-gradient(112deg, transparent 0 18%, rgba(255, 255, 255, 0.34) 18% 27%, transparent 27% 34%, rgba(255, 255, 255, 0.2) 34% 39%, transparent 39%),
+    repeating-linear-gradient(90deg, rgba(120, 85, 40, 0.045) 0 2px, transparent 2px 26px),
+    linear-gradient(180deg, #f3e8d2, #ebdfc6 70%, #e3d5b9);
+}
+.b3-shadow { height: 58px; bottom: -22px; background: radial-gradient(ellipse at center, rgba(30, 16, 6, 0.62), transparent 70%); }
+.b3::after { /* لبهٔ ضخامت صفحه‌ها */
+  content: ''; position: absolute; inset-inline: 2px 0; bottom: -5px; height: 5px; border-radius: 0 0 3px 3px; transform: translateZ(-2px);
+  background: repeating-linear-gradient(90deg, #f1e6cc 0 2px, #cdbb94 2px 3px);
+}
+.b3-ribbon {
+  position: absolute; top: -3px; inset-inline-end: 38px; width: 13px; height: 74px; z-index: 6; transform: translateZ(2px);
+  background: linear-gradient(90deg, #8e1d17, #c9362c 55%, #8e1d17); clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 86%, 0 100%);
+  box-shadow: 0 3px 4px rgba(0, 0, 0, 0.4); opacity: 0; transition: opacity 0.4s ease 1s;
+}
+.b3-stage.is-open .b3-ribbon { opacity: 1; }
+.bs-desktop-face { background: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.055) 0 3px, transparent 3px 13px), repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 9px), linear-gradient(180deg, #d9ac76, var(--wood-l) 40%, var(--wood)); }
+.bs-tea { position: absolute; inset-inline-end: 3%; bottom: 46px; width: 74px; height: auto; z-index: 3; }
+.bs-pen { position: absolute; inset-inline-start: 4%; bottom: 14px; width: 118px; height: auto; z-index: 3; transform: rotate(-9deg); filter: drop-shadow(2px 3px 2px rgba(30, 16, 6, 0.45)); }
+[dir='rtl'] .bs-pen { transform: rotate(9deg) scaleX(-1); }
+.bs-steam path { stroke-dasharray: 40; animation: bsSteam 3.2s ease-in-out infinite; }
+.bs-steam .s2 { animation-delay: 0.7s; }
+.bs-steam .s3 { animation-delay: 1.4s; }
+@keyframes bsSteam { 0% { stroke-dashoffset: 40; opacity: 0; transform: translateY(6px); } 40% { opacity: 0.8; } 100% { stroke-dashoffset: -10; opacity: 0; transform: translateY(-8px); } }
+@media (max-width: 760px) { .bs-tea, .bs-pen { display: none; } .b3-ribbon { inset-inline-end: 22px; } }
+@media (prefers-reduced-motion: reduce) { .bs-steam path { animation: none; opacity: 0.6; stroke-dashoffset: 0; } .b3-ribbon { transition: none; } }
