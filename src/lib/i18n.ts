@@ -5,10 +5,10 @@ import type { Dict, InnerPageId, Lang, PageId, Post } from '@/content/types';
 
 export const SITE_URL = 'https://websiteco.ir';
 /**
- * حالت «در حال به‌روزرسانی»: وقتی true است آدرس websiteco.ir صفحهٔ به‌روزرسانی را نشان می‌دهد
- * و خانهٔ سایت اصلی روی websiteco.ir/test است. برای انتشار نهایی فقط false کنید.
+ * حالت «در حال به‌روزرسانی»: اگر true شود آدرس websiteco.ir صفحهٔ به‌روزرسانی را نشان می‌دهد
+ * و خانهٔ سایت روی /test می‌رود. سایت منتشر شده است، پس false بماند.
  */
-export const MAINTENANCE = true;
+export const MAINTENANCE = false;
 export const langs: Lang[] = ['fa', 'en', 'ru'];
 export const dicts: Record<Lang, Dict> = { fa, en, ru };
 export const innerIds: InnerPageId[] = [
