@@ -6,7 +6,7 @@ define('CMS_ROOT', dirname(__DIR__));                 // public_html
 define('CMS_UPLOADS', CMS_ROOT . '/uploads');
 $__parent = dirname(CMS_ROOT);
 define('CMS_DATA', (is_dir($__parent) && is_writable($__parent)) ? $__parent . '/cms_data' : CMS_ROOT . '/cms-data');
-const SITE_HOST = 'websiteco.ir';   // دامنهٔ اصلی؛ به‌جای HTTP_HOST (که مهاجم می‌تواند جعل کند) در canonical، نقشه و ایمیل استفاده می‌شود
+const SITE_HOST = 'heleyleh-bu.ir';   // دامنهٔ اصلی؛ به‌جای HTTP_HOST (که مهاجم می‌تواند جعل کند) در canonical، نقشه و ایمیل استفاده می‌شود
 const LANGS = ['fa' => 'فارسی', 'en' => 'English', 'ru' => 'Русский'];
 const TYPES = [
     'post'    => ['label' => 'نوشته‌ها',      'one' => 'نوشته',     'icon' => '✎'],

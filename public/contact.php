@@ -5,7 +5,7 @@
  *
  * مهم: قبل از انتشار، آدرس $TO را به ایمیل واقعی مدیریت تغییر دهید.
  */
-$TO = 'info@websiteco.ir';
+$TO = 'info@heleyleh-bu.ir';
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
@@ -71,7 +71,7 @@ if (is_file($cms)) {
     } catch (Throwable $e) { /* اگر پنل مشکل داشت، ایمیل همچنان ارسال می‌شود */ }
 }
 
-$domain = 'websiteco.ir';   // ثابت؛ هدر Host قابل جعل است و داخل هدر ایمیل نباید بیاید
+$domain = 'heleyleh-bu.ir';   // ثابت؛ هدر Host قابل جعل است و داخل هدر ایمیل نباید بیاید
 $mailSubject = mb_encode_mimeheader('[' . $domain . '] ' . ($subject ?: 'Contact') . ' - ' . $name, 'UTF-8', 'B');
 
 $body  = "Name: $name\n";

@@ -2,7 +2,7 @@
   "name": "helileh-village",
   "version": "1.0.0",
   "private": true,
-  "description": "سایت دهیاری روستای گردشگری هلیله (websiteco.ir) - Next.js static export",
+  "description": "سایت دهیاری روستای گردشگری هلیله (heleyleh-bu.ir) - Next.js static export",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-/** آدرس آزمایشی قدیمی websiteco.ir/test به صفحهٔ اصلی می‌رود */
+/** آدرس آزمایشی قدیمی heleyleh-bu.ir/test به صفحهٔ اصلی می‌رود */
 export const metadata: Metadata = {
   title: 'هلیله باستانی، بوشهر',
   robots: { index: false, follow: true },
