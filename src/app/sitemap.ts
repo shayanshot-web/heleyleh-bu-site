@@ -9,7 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .filter((r) => !(MAINTENANCE && r.kind === 'home' && r.lang === 'fa'))
     .map((r) => ({
     url: `${SITE_URL}${routePath(r)}`,
-    lastModified: now,
+    lastModified: r.kind === 'post' ? new Date(`${r.post.date}T00:00:00Z`) : now,
     changeFrequency: r.kind === 'post' ? 'monthly' : 'weekly',
     priority: r.kind === 'home' ? 1 : r.kind === 'post' ? 0.5 : 0.7,
   }));
