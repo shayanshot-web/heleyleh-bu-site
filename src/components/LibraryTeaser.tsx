@@ -30,24 +30,50 @@ const ui: Record<Lang, { title: string; quote: string; text: string; cta: string
 function BookIcon() {
   return (
     <span className="lt-art" aria-hidden="true">
+      <span className="lt-glow" />
+      <span className="lt-shadow" />
       <span className="lt-book">
         <span className="lt-cover" />
-        <span className="lt-half lt-hl" />
-        <span className="lt-half lt-hr" />
+        <span className="lt-block lt-bl" />
+        <span className="lt-block lt-br" />
         <span className="lt-page lt-p1" />
         <span className="lt-page lt-p2" />
         <span className="lt-page lt-p3" />
+        <span className="lt-ribbon" />
       </span>
-      <svg className="lt-wave" viewBox="0 0 120 20" width="120" height="20">
-        <path d="M0 10c10-8 20-8 30 0s20 8 30 0 20-8 30 0 20 8 30 0" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-      </svg>
-      <svg className="lt-leaf lt-l1" viewBox="0 0 24 24" width="22" height="22">
-        <path d="M4 20C4 9 11 4 20 4c0 9-5 16-16 16z" fill="currentColor" />
-      </svg>
-      <svg className="lt-leaf lt-l2" viewBox="0 0 24 24" width="16" height="16">
-        <path d="M4 20C4 9 11 4 20 4c0 9-5 16-16 16z" fill="currentColor" />
-      </svg>
     </span>
+  );
+}
+
+/** پس‌زمینه: دریای شبانه با دو لایه موج و نخل بوشهری */
+function Backdrop() {
+  return (
+    <>
+      <svg className="lt-bg" viewBox="0 0 1200 330" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+        <g className="lt-palm" fill="none" stroke="#e9d9ad" strokeLinecap="round" opacity="0.2">
+          <path d="M1090 330c4-70 14-120 36-170" strokeWidth="7" />
+          <path d="M1126 160c-30-34-70-40-104-26M1126 160c-14-40-46-62-86-64M1126 160c10-38 36-62 76-70M1126 160c26-24 56-30 86-20M1126 160c-6 20-30 30-52 34" strokeWidth="5" />
+        </g>
+        <g className="w1" fill="#0a6fb5" opacity="0.28">
+          <path d="M-100 262c80-26 160-26 240 0s160 26 240 0 160-26 240 0 160 26 240 0 160-26 240 0 160 26 240 0V330H-100z" />
+        </g>
+        <g className="w2" fill="#5fb4e6" opacity="0.2">
+          <path d="M-100 288c80-22 160-22 240 0s160 22 240 0 160-22 240 0 160 22 240 0 160-22 240 0 160 22 240 0V330H-100z" />
+        </g>
+        <g fill="#031625" opacity="0.5"><path d="M-100 312c120-14 240-14 360 0s240 14 360 0 240-14 360 0 240 14 360 0V330H-100z" /></g>
+      </svg>
+      <span className="lt-dust">
+        {[
+          ['9%', '3px', '7s', '0s'],
+          ['16%', '4px', '9s', '2s'],
+          ['23%', '2px', '8s', '4s'],
+          ['30%', '3px', '10s', '1s'],
+          ['12%', '2px', '11s', '5s'],
+        ].map(([x, sz, t, d]) => (
+          <i key={x} style={{ '--x': x, '--s': sz, '--t': t, '--d': d } as React.CSSProperties} />
+        ))}
+      </span>
+    </>
   );
 }
 
@@ -57,6 +83,7 @@ export default function LibraryTeaser({ lang }: { lang: Lang }) {
     <section className="section lt-section">
       <div className="container">
         <Link href={pagePath(lang, 'blog')} className="lt-card" data-sound="pop" data-click-sound="flip" aria-label={t.label}>
+          <Backdrop />
           <BookIcon />
           <span className="lt-body">
             <h2>{t.title}</h2>
