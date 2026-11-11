@@ -17,7 +17,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -47,13 +47,14 @@ jobs:
           set ftp:ssl-auth TLS
           set ssl:verify-certificate no
           set ftp:passive-mode true
-          set net:max-retries 30
-          set net:persist-retries 30
-          set net:reconnect-interval-base 5
+          set net:max-retries 12
+          set net:persist-retries 12
+          set net:reconnect-interval-base 3
+          set net:connection-limit 6
           set net:reconnect-interval-max 30
-          set net:timeout 60
+          set net:timeout 20
           set mirror:set-permissions no
-          mirror --reverse --verbose=1 --parallel=1 --exclude-glob .git* --exclude-glob uploads/ --exclude-glob cms-data/ --exclude-glob cms_data/ ./out/ ./
+          mirror --reverse --verbose=1 --parallel=6 --exclude-glob .git* --exclude-glob uploads/ --exclude-glob cms-data/ --exclude-glob cms_data/ ./out/ ./
           bye
           LFTP
           lftp -u "$FTP_USERNAME,$FTP_PASSWORD" "ftp://$FTP_SERVER" -e "source $RUNNER_TEMP/deploy.lftp"
