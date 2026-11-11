@@ -1,6 +1,7 @@
 import { fa } from '@/content/fa';
 import { en } from '@/content/en';
 import { ru } from '@/content/ru';
+import { extraPosts } from '@/content/morePosts';
 import type { Dict, InnerPageId, Lang, PageId, Post } from '@/content/types';
 
 export const SITE_URL = 'https://heleyleh-bu.ir';
@@ -9,8 +10,14 @@ export const SITE_URL = 'https://heleyleh-bu.ir';
  * و خانهٔ سایت روی /test می‌رود. سایت منتشر شده است، پس false بماند.
  */
 export const MAINTENANCE = false;
+/**
+ * کد تأیید مالکیت سایت در موتورهای جستجو (روش «تگ HTML»).
+ * هر کدام را از Search Console / Bing Webmaster / Yandex Webmaster بگیرید و بین گیومه بگذارید؛ خالی باشد تگ ساخته نمی‌شود.
+ */
+export const SEARCH_VERIFY = { google: '0zNUkBoKxHS0aTESNbBNc2N5oQjdRcGE8HDmDIO6Ubc', bing: '4648680022200BDDF812628003F942DC', yandex: '' };
 export const langs: Lang[] = ['fa', 'en', 'ru'];
-export const dicts: Record<Lang, Dict> = { fa, en, ru };
+const withPosts = (d: Dict, l: Lang): Dict => ({ ...d, posts: [...extraPosts[l], ...d.posts] });
+export const dicts: Record<Lang, Dict> = { fa: withPosts(fa, 'fa'), en: withPosts(en, 'en'), ru: withPosts(ru, 'ru') };
 export const innerIds: InnerPageId[] = [
   'about',
   'stay',

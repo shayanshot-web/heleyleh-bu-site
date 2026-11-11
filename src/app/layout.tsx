@@ -3,10 +3,15 @@ import type { ReactNode } from 'react';
 import '@fontsource-variable/vazirmatn';
 import '@fontsource/lalezar';
 import './globals.css';
-import { SITE_URL } from '@/lib/i18n';
+import { SEARCH_VERIFY, SITE_URL } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  verification: {
+    ...(SEARCH_VERIFY.google ? { google: SEARCH_VERIFY.google } : {}),
+    ...(SEARCH_VERIFY.yandex ? { yandex: SEARCH_VERIFY.yandex } : {}),
+    ...(SEARCH_VERIFY.bing ? { other: { 'msvalidate.01': SEARCH_VERIFY.bing } } : {}),
+  },
 };
 
 export const viewport: Viewport = {

@@ -9,6 +9,7 @@ import Messengers from './Messengers';
 import Aquarium from './Aquarium';
 import { messengerUi } from '@/content/messengers';
 import HelilehMap from './HelilehMap';
+import JsonLd from './JsonLd';
 import {
   altRoute,
   dicts,
@@ -60,6 +61,7 @@ export default function Shell({ route, children }: { route: Route; children: Rea
 
   return (
     <div lang={lang} dir={d.dir} className={`shell lang-${lang}`}>
+      <JsonLd route={route} />
       <LangSync lang={lang} dir={d.dir} />
       <a className="skip-link" href="#main">
         {d.ui.skip}
