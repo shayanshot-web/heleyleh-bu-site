@@ -56,4 +56,4 @@ jobs:
           mirror --reverse --verbose=1 --parallel=1 --exclude-glob .git* --exclude-glob uploads/ --exclude-glob cms-data/ --exclude-glob cms_data/ ./out/ ./
           bye
           LFTP
-          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" -f "$RUNNER_TEMP/deploy.lftp" "ftp://$FTP_SERVER"
+          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" "ftp://$FTP_SERVER" -e "source $RUNNER_TEMP/deploy.lftp"
