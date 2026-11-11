@@ -8,6 +8,10 @@ RewriteEngine On
 # اعتبارسنجی SSL (AutoSSL) به این مسیر روی http نیاز دارد؛ ریدایرکت نشود
 RewriteRule ^\.well-known/ - [L]
 
+# دامنهٔ قدیمی (websiteco.ir) اگر هنوز به همین هاست اشاره کند، دائمی به دامنهٔ اصلی می‌رود
+RewriteCond %{HTTP_HOST} ^(www\.)?websiteco\.ir$ [NC]
+RewriteRule ^ https://heleyleh-bu.ir%{REQUEST_URI} [L,R=301]
+
 # ریدایرکت به https (بعد از صدور SSL فعال می‌شود)
 RewriteCond %{HTTPS} !=on
 RewriteCond %{HTTP:X-Forwarded-Proto} !=https

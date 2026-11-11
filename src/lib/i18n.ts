@@ -3,9 +3,9 @@ import { en } from '@/content/en';
 import { ru } from '@/content/ru';
 import type { Dict, InnerPageId, Lang, PageId, Post } from '@/content/types';
 
-export const SITE_URL = 'https://websiteco.ir';
+export const SITE_URL = 'https://heleyleh-bu.ir';
 /**
- * حالت «در حال به‌روزرسانی»: اگر true شود آدرس websiteco.ir صفحهٔ به‌روزرسانی را نشان می‌دهد
+ * حالت «در حال به‌روزرسانی»: اگر true شود آدرس heleyleh-bu.ir صفحهٔ به‌روزرسانی را نشان می‌دهد
  * و خانهٔ سایت روی /test می‌رود. سایت منتشر شده است، پس false بماند.
  */
 export const MAINTENANCE = false;

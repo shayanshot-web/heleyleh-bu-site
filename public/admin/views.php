@@ -237,7 +237,7 @@ function page_profile(array $user): void {
 function page_settings(array $user): void {
     if ($user['role'] !== 'admin') { http_response_code(403); exit('دسترسی ندارید'); }
     layout_start('تنظیمات', 'settings', $user);
-    echo '<form method="post" action="/admin/?a=settings" class="box narrow"><input type="hidden" name="_csrf" value="' . e(csrf()) . '"><label>ایمیل دریافت پیام‌های تماس و درخواست‌ها<input name="notify_email" value="' . e(setting('notify_email')) . '" dir="ltr" placeholder="info@websiteco.ir"></label>';
+    echo '<form method="post" action="/admin/?a=settings" class="box narrow"><input type="hidden" name="_csrf" value="' . e(csrf()) . '"><label>ایمیل دریافت پیام‌های تماس و درخواست‌ها<input name="notify_email" value="' . e(setting('notify_email')) . '" dir="ltr" placeholder="info@heleyleh-bu.ir"></label>';
     foreach (['fa' => 'فارسی', 'en' => 'English', 'ru' => 'Русский'] as $l => $n) echo '<label>یادداشت زیر لیست محصولات (' . $n . ')<textarea name="shop_note_' . $l . '" rows="2" dir="' . ($l === 'fa' ? 'rtl' : 'ltr') . '">' . e(setting('shop_note_' . $l)) . '</textarea></label>';
     echo '<button class="btn primary">ذخیره</button></form>';
     xp_translate_settings_box();
