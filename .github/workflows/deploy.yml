@@ -30,22 +30,30 @@ jobs:
       - run: npm run build
       - name: Write build marker
         run: echo "commit ${GITHUB_SHA} built at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > out/build.txt
-      - name: Upload to cPanel via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftps
-          security: loose
-          timeout: 120000
-          log-level: standard
-          local-dir: ./out/
-          server-dir: ./
-          # عکس‌های آپلودشده از پنل و دیتابیس هرگز لمس نمی‌شوند
-          exclude: |
-            **/.git*
-            **/.git*/**
-            uploads/**
-            cms-data/**
-            cms_data/**
+      # lftp به‌جای FTP-Deploy-Action: اگر هاست وسط کار اتصال را ببندد (خطای «FIN packet»)، خودش دوباره وصل می‌شود و ادامه می‌دهد.
+      # فایلی روی سرور پاک نمی‌شود (uploads و cms-data امن می‌مانند)؛ فقط فایل‌های جدید یا تغییرکرده بارگذاری می‌شوند.
+      - name: Upload to cPanel via FTPS (lftp)
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq lftp
+          cat > "$RUNNER_TEMP/deploy.lftp" <<'LFTP'
+          set cmd:fail-exit yes
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ftp:ssl-auth TLS
+          set ssl:verify-certificate no
+          set ftp:passive-mode true
+          set net:max-retries 30
+          set net:persist-retries 30
+          set net:reconnect-interval-base 5
+          set net:reconnect-interval-max 30
+          set net:timeout 60
+          set mirror:set-permissions no
+          mirror --reverse --verbose=1 --parallel=1 --exclude-glob .git* --exclude-glob uploads/ --exclude-glob cms-data/ --exclude-glob cms_data/ ./out/ ./
+          bye
+          LFTP
+          lftp -u "$FTP_USERNAME,$FTP_PASSWORD" -f "$RUNNER_TEMP/deploy.lftp" "ftp://$FTP_SERVER"
