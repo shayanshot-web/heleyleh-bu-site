@@ -4,6 +4,7 @@ require __DIR__ . '/../cms-core/lib.php';
 require __DIR__ . '/views.php';
 require __DIR__ . '/xp.php';
 require __DIR__ . '/content.php';
+require __DIR__ . '/stats.php';
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');

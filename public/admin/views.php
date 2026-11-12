@@ -20,6 +20,7 @@ function layout_start(string $title, string $active, array $user): void {
     echo '<body><div class="app"><aside class="side"><a class="brand" href="/admin/">هلیله · مدیریت</a><nav>';
     $nav = [['dashboard', '/admin/', '⌂', 'پیشخوان', true]];
     foreach (TYPES as $k => $t) $nav[] = ['list-' . $k, '/admin/?a=list&type=' . $k, $t['icon'], $t['label'], can($k)];
+    $nav[] = ['stats', '/admin/?a=stats', '◔', 'آمار بازدید', can('others')];
     $nav[] = ['content', '/admin/?a=content', '✎', 'متن‌های سایت', can('page')];
     $nav[] = ['media', '/admin/?a=media', '▤', 'کتابخانه رسانه', can('media')];
     $nav[] = ['messages', '/admin/?a=messages', '✉', 'پیام‌ها' . ($unread ? " ($unread)" : ''), can('messages')];
@@ -41,6 +42,7 @@ function render_page(string $a, array $user, string $type): void {
     switch ($a) {
         case 'list': page_list($user, $type); break;
         case 'edit': page_edit($user, $type); break;
+        case 'stats': page_stats($user); break;
         case 'content': page_content($user); break;
         case 'media': page_media($user); break;
         case 'messages': page_messages($user); break;
