@@ -73,3 +73,28 @@ function ov_filter(string $buf): string {
 function ov_start_buffer(): void {
     ob_start(fn(string $b) => ov_filter($b));
 }
+
+/** سرو صفحهٔ استاتیک (HTML/.txt) با اعمال متن‌های ویرایش‌شده؛ از dynamic.php?ovp=/مسیر صدا زده می‌شود.
+    اگر پنل/دیتابیس مشکل داشته باشد همان فایل اصلی برمی‌گردد. */
+function ov_serve(string $u): void {
+    $root = realpath(CMS_ROOT);
+    $notFound = function () use ($root): void {
+        http_response_code(404); header('Content-Type: text/html; charset=utf-8');
+        $f = $root . '/404.html'; if (is_file($f)) readfile($f); else echo 'Not found';
+    };
+    $u = rawurldecode((string)(strtok($u, '?') ?: ''));
+    if ($root === false || $u === '' || $u[0] !== '/' || strpos($u, "\0") !== false || strpos($u, '..') !== false) { $notFound(); return; }
+    $path = $root . $u;
+    if (is_dir($path)) $path = rtrim($path, '/') . '/index.html';
+    $real = realpath($path);
+    if ($real === false || strpos($real, $root . DIRECTORY_SEPARATOR) !== 0 || !is_file($real)) { $notFound(); return; }
+    $ext = strtolower(pathinfo($real, PATHINFO_EXTENSION));
+    if (!in_array($ext, ['html', 'txt'], true)) { $notFound(); return; }
+    header('Content-Type: ' . ($ext === 'html' ? 'text/html' : 'text/plain') . '; charset=utf-8');
+    header('Cache-Control: no-cache');
+    $body = (string)file_get_contents($real);
+    if (!in_array(basename($real), ['robots.txt', 'build.txt'], true) && is_file($root . '/cms-defaults.json')) {
+        try { $body = ov_filter($body); } catch (Throwable $e) { /* فایل اصلی */ }
+    }
+    echo $body;
+}
