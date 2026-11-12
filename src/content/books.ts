@@ -1,4 +1,5 @@
 import type { Lang } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /**
  * کتابخانهٔ نشر هلیله (صفحهٔ «وبلاگ»).
@@ -297,3 +298,6 @@ export const bookUi: Record<Lang, BookUi> = {
     empty: 'Книги издательства «Хелиле» скоро появятся на этой полке.',
   },
 };
+applyOverrides('books', books);
+applyOverrides('publisher', publisher);
+applyOverrides('bookUi', bookUi);

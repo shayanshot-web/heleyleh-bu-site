@@ -3,6 +3,7 @@ declare(strict_types=1);
 require __DIR__ . '/../cms-core/lib.php';
 require __DIR__ . '/views.php';
 require __DIR__ . '/xp.php';
+require __DIR__ . '/content.php';
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
@@ -49,6 +50,8 @@ if (($a === 'tr_settings' || $a === 'tr_test') && $post) {
     if ($user['role'] !== 'admin') { http_response_code(403); exit('دسترسی ندارید'); }
     $a === 'tr_settings' ? xp_save_tr_settings() : xp_test_translate();
 }
+
+if ($a === 'content_save' && $post) content_save($user);
 
 /* ---- ذخیره محتوا ---- */
 if ($a === 'save' && $post) {

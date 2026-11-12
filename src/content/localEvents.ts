@@ -1,4 +1,5 @@
 import type { Lang } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /**
  * رویدادهای هلیله (بالای تقویم باستانی).
@@ -156,3 +157,5 @@ export const localEventsUi: Record<
   en: { title: 'Helileh events', lead: 'Rituals and programmes held in Helileh every year, all free and run by the community.', cols: { event: 'Event', date: 'Date', time: 'Time', place: 'Place', entry: 'Entry' }, free: 'Free', organizer: 'Organiser', community: 'Community', lunar: 'Lunar date', photoSoon: 'Photo soon', source: 'About Mid-Sha\'ban', sourceUrl: 'https://en.wikipedia.org/wiki/Mid-Sha%27ban', more: 'Read the full text', by: 'Text' },
   ru: { title: 'События Хелиле', lead: 'Обряды и программы, которые проходят в Хелиле каждый год; всё бесплатно и силами жителей.', cols: { event: 'Событие', date: 'Дата', time: 'Время', place: 'Место', entry: 'Вход' }, free: 'Бесплатно', organizer: 'Организатор', community: 'Жители', lunar: 'Лунная дата', photoSoon: 'Фото скоро', source: 'О середине шабана', sourceUrl: 'https://en.wikipedia.org/wiki/Mid-Sha%27ban', more: 'Читать полностью', by: 'Текст' },
 };
+applyOverrides('localEvents', localEvents);
+applyOverrides('localEventsUi', localEventsUi);

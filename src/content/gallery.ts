@@ -1,4 +1,5 @@
 import type { Lang } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /**
  * گالری تصاویر.
@@ -83,3 +84,5 @@ export const galleryUi: Record<
     open: 'Увеличить',
   },
 };
+applyOverrides('galleryItems', galleryItems);
+applyOverrides('galleryUi', galleryUi);

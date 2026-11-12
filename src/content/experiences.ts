@@ -1,4 +1,5 @@
 import type { Lang } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /**
  * تجربه‌ها و آدم‌هایشان.
@@ -57,3 +58,6 @@ export const expUi: Record<Lang, { coordinator: string; photoSoon: string; call:
   en: { coordinator: 'Contact', photoSoon: 'Photo soon', call: 'Call', noPerson: 'Open to everyone', teaserTitle: 'Experiences and the people behind them', teaserCta: 'All experiences', peopleTitle: 'People of Helileh' },
   ru: { coordinator: 'Контакт', photoSoon: 'Фото скоро', call: 'Позвонить', noPerson: 'Свободный доступ', teaserTitle: 'Впечатления и люди', teaserCta: 'Все впечатления', peopleTitle: 'Люди Хелиле' },
 };
+applyOverrides('people', people);
+applyOverrides('experiences', experiences);
+applyOverrides('expUi', expUi);
