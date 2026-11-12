@@ -1,4 +1,5 @@
 import type { Lang, PostId } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /** نوع نقطه روی نقشه */
 export type MapKind = 'village' | 'ancient' | 'fun' | 'culture' | 'hub';
@@ -109,3 +110,5 @@ export const mapStrings: Record<Lang, MapStrings> = {
     readMore: 'Читать статью',
   },
 };
+applyOverrides('mapPoints', mapPoints);
+applyOverrides('mapStrings', mapStrings);

@@ -73,3 +73,13 @@ body.login{display:flex;align-items:center;justify-content:center;min-height:100
 .chk{display:flex;align-items:center;gap:8px;margin:6px 0;font-weight:400}
 .chk input{width:auto;margin:0}
 
+
+/* متن‌های سایت */
+.ct-search{display:flex;gap:8px;margin-bottom:16px}.ct-search input{flex:1;max-width:480px}
+.ct-row{margin:0 0 14px;padding:10px 12px;border:1px solid var(--line,#d9e0e6);border-radius:10px;background:#fff}
+.ct-row.mod{border-color:#2f8f5b;background:#f4fbf7}
+.ct-row label{display:block}.ct-key{display:block;font-size:.85rem;margin-bottom:4px;color:#44525e}
+.ct-key em{font-style:normal;background:#eef2f5;border-radius:6px;padding:0 6px;margin-inline:4px}.ct-key b{color:#2f8f5b}
+.ct-row input,.ct-row textarea{width:100%;box-sizing:border-box;font:inherit}
+.ct-save{position:sticky;bottom:0;background:#fff;padding:10px 0;margin:0}
+.ct-tabs{margin:6px 0 12px}

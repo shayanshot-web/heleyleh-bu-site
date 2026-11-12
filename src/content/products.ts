@@ -1,4 +1,5 @@
 import type { Lang } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /**
  * محصولات صنایع دستی.
@@ -25,3 +26,5 @@ export const productUi: Record<Lang, { title: string; ask: string; note: string 
   en: { title: 'Products', ask: 'Ask for price and order', note: 'Illustration only; real product photos are coming soon.' },
   ru: { title: 'Товары', ask: 'Узнать цену и заказать', note: 'Это иллюстрация; реальные фото скоро появятся.' },
 };
+applyOverrides('products', products);
+applyOverrides('productUi', productUi);

@@ -29,6 +29,12 @@ RewriteRule ^search-cms\.json$ /dynamic.php?searchindex=1 [L]
 # صفحهٔ اصلی هر زبان (نوار «تجربه‌ها» از پنل؛ بدون داده در پنل همان صفحهٔ استاتیک نمایش داده می‌شود)
 RewriteRule ^(?:(en|ru)/)?$ /dynamic.php?home=1&hl=$1 [L,QSA]
 RewriteRule ^((?:en/|ru/)?(?:about|accommodations|experiences|gallery|blog|events|handicraft-shop|about-us|stay|things-to-do|photo-gallery|travel-blog|events-calendar|craft-shop|o-nas|prozhivanie|vpechatleniya|galereya|blog-helile|sobytiya|remesla)(?:/[^/.]+)?)/?$ /dynamic.php?p=$1 [L,QSA]
+
+# همهٔ صفحه‌های استاتیک (HTML و فایل‌های .txt مسیریابی Next) از ov.php رد می‌شوند تا متن‌های ویرایش‌شدهٔ «متن‌های سایت» در پنل اعمال شود
+RewriteCond %{REQUEST_URI} !^/(admin|uploads|cms-core|cms-data|cms_data|_next|\.well-known)/
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
+RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
+RewriteRule ^(.*(?:/|\.html|\.txt))$ /ov.php?u=/$1 [L,QSA]
 </IfModule>
 
 ErrorDocument 404 /404.html
@@ -36,6 +42,7 @@ ErrorDocument 404 /404.html
 # فشرده‌سازی
 <IfModule mod_deflate.c>
 AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/plain application/xml
+
 </IfModule>
 
 # کش فایل‌های ثابت (نام فایل‌های _next/static شامل هش است)
@@ -72,6 +79,6 @@ Require all denied
 Require all denied
 </FilesMatch>
 # از فایل‌های PHP فقط نقطه‌های ورود مجاز است (admin/xp.php، admin/views.php و … مستقیم باز نمی‌شوند؛ cms-core هم جداگانه بسته است)
-<FilesMatch "^(?!(index|dynamic|contact|comments|install|reset-admin)\.php$).*\.php$">
+<FilesMatch "^(?!(index|dynamic|ov|contact|comments|install|reset-admin)\.php$).*\.php$">
 Require all denied
 </FilesMatch>

@@ -3,6 +3,7 @@ import { en } from '@/content/en';
 import { ru } from '@/content/ru';
 import { extraPosts } from '@/content/morePosts';
 import type { Dict, InnerPageId, Lang, PageId, Post } from '@/content/types';
+import { applyOverrides } from '@/lib/overrides';
 
 export const SITE_URL = 'https://heleyleh-bu.ir';
 /**
@@ -177,3 +178,4 @@ export function formatYear(lang: Lang): string {
   const locale = lang === 'fa' ? 'fa-IR-u-ca-persian' : dicts[lang].locale;
   return new Intl.DateTimeFormat(locale, { year: 'numeric' }).format(new Date());
 }
+applyOverrides('dicts', dicts);

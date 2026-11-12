@@ -1,4 +1,5 @@
 import type { Lang } from './types';
+import { applyOverrides } from '@/lib/overrides';
 
 /* تقویم هلیله: بادهای محلی و جشن‌های ایران باستان (تاریخ‌ها به تقویم خورشیدی/جلالی) */
 
@@ -290,3 +291,6 @@ export const entries: CalEntry[] = [
     },
   },
 ];
+applyOverrides('calUi', calUi);
+applyOverrides('calEntries', entries);
+applyOverrides('monthNames', monthNames);
