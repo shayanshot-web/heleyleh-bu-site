@@ -112,7 +112,7 @@ function page_stats(array $user): void {
     $one = fn(string $sql, array $a = []) => $q($sql, $a)[0] ?? [];
 
 
-    $diag = function () { $L = stats_log_tail(15); return '<details class="st-card wide"' . (!$L ? '' : ' open') . '><summary><b>عیب‌یابی ردیاب</b></summary><p class="muted">آزمایش سلامت: <a href="/t.php?check=1" target="_blank" rel="noopener" dir="ltr">/t.php?check=1</a> (باید <span dir="ltr">{"ok":true,…}</span> نشان دهد). دلیل بازدیدهای ثبت‌نشده اینجا نوشته می‌شود:</p>' . ($L ? '<pre dir="ltr" class="st-log">' . e(implode("\n", $L)) . '</pre>' : '<p class="muted">خطا یا ردی از درخواست رد‌شده نیست.</p>') . '</details>'; };
+    $diag = function () { $L = stats_log_tail(15); return '<details class="st-card wide"' . (!$L ? '' : ' open') . '><summary><b>عیب‌یابی ردیاب</b></summary><p class="muted">آزمایش سلامت: <a href="/dynamic.php?hc=1&check=1" target="_blank" rel="noopener" dir="ltr">/dynamic.php?hc=1&amp;check=1</a> (باید <span dir="ltr">{"ok":true,…}</span> نشان دهد). دلیل بازدیدهای ثبت‌نشده اینجا نوشته می‌شود:</p>' . ($L ? '<pre dir="ltr" class="st-log">' . e(implode("\n", $L)) . '</pre>' : '<p class="muted">خطا یا ردی از درخواست رد‌شده نیست.</p>') . '</details>'; };
     echo '<div class="st-top"><p class="ct-tabs">';
     foreach ($opts as $k => $nm) echo '<a class="btn' . ($rng === (string)$k ? ' primary' : '') . '" href="/admin/?a=stats&r=' . $k . '">' . e($nm) . '</a> ';
     echo '</p><label class="st-me"><input type="checkbox" data-notrack> این مرورگر را از آمار حذف کن (بازدیدهای خودم شمرده نشود)</label></div>';

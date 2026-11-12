@@ -208,3 +208,30 @@ function stats_log_tail(int $n = 15): array {
     $f = CMS_DATA . '/stats-debug.log';
     return is_file($f) ? array_slice(array_filter(explode("\n", (string)file_get_contents($f))), -$n) : [];
 }
+
+/** نقطهٔ دریافت آمار: هم از t.php و هم از dynamic.php?hc=1 قابل‌استفاده است (اگر هاست یکی را ببندد دیگری کار کند) */
+function stats_endpoint(): void {
+    header('Cache-Control: no-store');
+    $method = $_SERVER['REQUEST_METHOD'] ?? '';
+    try {
+        if ($method === 'GET' && isset($_GET['check'])) {   // آزمایش سلامت
+            header('Content-Type: application/json');
+            $n = (int)stats_db()->query('SELECT COUNT(*) FROM hits')->fetchColumn();
+            echo json_encode(['ok' => true, 'php' => PHP_VERSION, 'hits' => $n]); return;
+        }
+        http_response_code(204);
+        if ($method !== 'POST') return;
+        $origin = (string)($_SERVER['HTTP_ORIGIN'] ?? '');
+        if ($origin !== '') {
+            $oh = strtolower(preg_replace('/^www\./', '', (string)parse_url($origin, PHP_URL_HOST)));
+            if ($oh !== SITE_HOST && !in_array($oh, ['localhost', '127.0.0.1'], true)) { stats_log('origin-rejected: ' . mb_substr($origin, 0, 60)); return; }
+        }
+        $in = json_decode((string)file_get_contents('php://input', false, null, 0, 4096), true);
+        if (!is_array($in)) { stats_log('bad-json'); return; }
+        $r = stats_collect($in);
+        if ($r !== 'ok') stats_log($r);
+    } catch (Throwable $e) {
+        stats_log('ERROR ' . get_class($e) . ': ' . preg_replace('~/[^\s:]+~', '[path]', $e->getMessage()));
+        if ($method === 'GET') { header('Content-Type: application/json'); echo json_encode(['ok' => false, 'error' => get_class($e)]); }
+    }
+}
