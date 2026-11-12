@@ -142,28 +142,29 @@ function stats_clean_path(string $p): ?string {
     if ($p !== '/' && !str_contains(basename($p), '.')) $p = rtrim($p, '/') . '/';
     return $p;
 }
-function stats_collect(array $in): void {
+/** نتیجه: 'ok' یا دلیل نشمردن (برای عیب‌یابی در پنل) */
+function stats_collect(array $in): string {
     $db = stats_db(); $now = time();
     $ua = (string)($_SERVER['HTTP_USER_AGENT'] ?? '');
-    if (stats_is_bot($ua)) return;
+    if (stats_is_bot($ua)) return 'bot: ' . mb_substr($ua, 0, 80);
     $ip = client_ip();
     $ih = hash('sha256', $ip . app_secret());
     $db->prepare('DELETE FROM rl WHERE ts<?')->execute([$now - 120]);
     $q = $db->prepare('SELECT COUNT(*) FROM rl WHERE h=?'); $q->execute([$ih]);
-    if ((int)$q->fetchColumn() >= 90) return;
+    if ((int)$q->fetchColumn() >= 90) return 'rate-limit';
     $db->prepare('INSERT INTO rl(h,ts) VALUES(?,?)')->execute([$ih, $now]);
 
     $hid = (string)($in['h'] ?? '');
-    if (!preg_match('/^[a-f0-9]{8,32}$/', $hid)) return;
+    if (!preg_match('/^[a-f0-9]{8,32}$/', $hid)) return 'bad-hid';
     $act = (string)($in['a'] ?? 'pv');
     if ($act === 'd') {
         $d = max(0, min(600, (int)($in['d'] ?? 0)));
         $db->prepare('UPDATE hits SET dur=MIN(dur+?,1800), last=? WHERE hid=?')->execute([$d, $now, $hid]);
-        return;
+        return 'ok';
     }
     $vid = (string)($in['v'] ?? ''); $sid = (string)($in['s'] ?? '');
-    if (!preg_match('/^[a-f0-9]{8,32}$/', $vid) || !preg_match('/^[a-f0-9]{8,32}$/', $sid)) return;
-    $path = stats_clean_path((string)($in['p'] ?? '')); if ($path === null) return;
+    if (!preg_match('/^[a-f0-9]{8,32}$/', $vid) || !preg_match('/^[a-f0-9]{8,32}$/', $sid)) return 'bad-id';
+    $path = stats_clean_path((string)($in['p'] ?? '')); if ($path === null) return 'bad-path';
     $lang = preg_match('#^/(en|ru)/#', $path, $m) ? $m[1] : 'fa';
     $ref = (string)($in['r'] ?? ''); $refHost = ''; $refUrl = '';
     if ($ref !== '' && preg_match('~^(https?|android-app)://([^/\s?#]+)~i', $ref, $m)) {
@@ -193,4 +194,17 @@ function stats_collect(array $in): void {
         $db->prepare('DELETE FROM hits WHERE ts<?')->execute([$now - STATS_KEEP_DAYS * 86400]);
         $db->prepare('DELETE FROM geo_cache WHERE ts<?')->execute([$now - 40 * 86400]);
     }
+    return 'ok';
+}
+
+/** ثبت دلیل‌های ناموفق (حداکثر ~۲۰ کیلوبایت) تا در پنل دیده شود */
+function stats_log(string $msg): void {
+    $f = CMS_DATA . '/stats-debug.log';
+    $line = gmdate('Y-m-d H:i:s') . ' UTC  ' . preg_replace('/\s+/', ' ', $msg) . "\n";
+    if (is_file($f) && filesize($f) > 20000) { $t = (string)@file_get_contents($f); @file_put_contents($f, substr($t, -8000)); }
+    @file_put_contents($f, $line, FILE_APPEND);
+}
+function stats_log_tail(int $n = 15): array {
+    $f = CMS_DATA . '/stats-debug.log';
+    return is_file($f) ? array_slice(array_filter(explode("\n", (string)file_get_contents($f))), -$n) : [];
 }

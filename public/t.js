@@ -1,9 +1,9 @@
-/* آمار بازدید هلیله: بدون کوکی و بدون آی‌پی؛ فقط شناسهٔ تصادفی در مرورگر. DNT و مرورگرهای خودکار شمرده نمی‌شوند. */
+/* آمار بازدید هلیله: بدون کوکی و بدون آی‌پی؛ فقط شناسهٔ تصادفی در مرورگر. مرورگرهای خودکار و مرورگرهای حذف‌شده از پنل شمرده نمی‌شوند. */
 (function () {
   'use strict';
   try {
     var ls = window.localStorage;
-    if (navigator.doNotTrack === '1' || navigator.webdriver || ls.getItem('hc_notrack') === '1') return;
+    if (navigator.webdriver || ls.getItem('hc_notrack') === '1') return;
     var rnd = function () { var a = new Uint8Array(8); (window.crypto || window.msCrypto).getRandomValues(a); return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); };
     var now = Date.now(), vid = ls.getItem('hc_v'), isNew = 0, sid = ls.getItem('hc_s'), seen = +ls.getItem('hc_t') || 0, entry = 0;
     if (!vid) { vid = rnd(); ls.setItem('hc_v', vid); isNew = 1; }
