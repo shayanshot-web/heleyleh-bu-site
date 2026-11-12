@@ -24,7 +24,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   // lang و dir دقیق هر صفحه را کامپوننت LangSync و wrapper داخل Shell تنظیم می‌کنند
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script src="/t.js" defer />
+      </body>
     </html>
   );
 }

@@ -8,6 +8,13 @@
     if (m && !window.confirm(m)) e.preventDefault();
   });
 
+  // حذف این مرورگر از آمار بازدید (همان origin سایت است)
+  var nt = document.querySelector('[data-notrack]');
+  if (nt) {
+    try { nt.checked = localStorage.getItem('hc_notrack') === '1'; } catch (e) {}
+    nt.addEventListener('change', function () { try { if (nt.checked) localStorage.setItem('hc_notrack', '1'); else localStorage.removeItem('hc_notrack'); } catch (e) {} });
+  }
+
   var form = document.querySelector('[data-editor]');
   if (!form) return;
 
