@@ -111,6 +111,8 @@ function page_stats(array $user): void {
     $q = function (string $sql, array $a = []) use ($db) { $s = $db->prepare($sql); $s->execute($a); return $s->fetchAll(); };
     $one = fn(string $sql, array $a = []) => $q($sql, $a)[0] ?? [];
 
+
+    $diag = function () { $L = stats_log_tail(15); return '<details class="st-card wide"' . (!$L ? '' : ' open') . '><summary><b>عیب‌یابی ردیاب</b></summary><p class="muted">آزمایش سلامت: <a href="/t.php?check=1" target="_blank" rel="noopener" dir="ltr">/t.php?check=1</a> (باید <span dir="ltr">{"ok":true,…}</span> نشان دهد). دلیل بازدیدهای ثبت‌نشده اینجا نوشته می‌شود:</p>' . ($L ? '<pre dir="ltr" class="st-log">' . e(implode("\n", $L)) . '</pre>' : '<p class="muted">خطا یا ردی از درخواست رد‌شده نیست.</p>') . '</details>'; };
     echo '<div class="st-top"><p class="ct-tabs">';
     foreach ($opts as $k => $nm) echo '<a class="btn' . ($rng === (string)$k ? ' primary' : '') . '" href="/admin/?a=stats&r=' . $k . '">' . e($nm) . '</a> ';
     echo '</p><label class="st-me"><input type="checkbox" data-notrack> این مرورگر را از آمار حذف کن (بازدیدهای خودم شمرده نشود)</label></div>';
@@ -119,7 +121,7 @@ function page_stats(array $user): void {
     if ((int)($tot['v'] ?? 0) === 0) {
         $any = (int)$one('SELECT COUNT(*) c FROM hits')['c'];
         echo '<div class="alert ok">' . ($any ? 'در این بازه بازدیدی ثبت نشده است.' : 'هنوز بازدیدی ثبت نشده. آمار از لحظهٔ فعال‌شدن این بخش شروع می‌شود و ربات‌ها شمرده نمی‌شوند. یک بار سایت را (در پنجرهٔ ناشناس یا مرورگری که حذف‌شده نیست) باز کنید و اینجا را دوباره ببینید.') . '</div>';
-        layout_end(); return;
+        echo $diag(); layout_end(); return;
     }
     $prev = $one('SELECT COUNT(*) v, COUNT(DISTINCT vid) u FROM hits WHERE ts>=? AND ts<?', [$pfrom, $from]);
     $sess = $q('SELECT COUNT(*) c, SUM(dur) d FROM hits WHERE ts>=? GROUP BY sid', [$from]);
@@ -203,5 +205,6 @@ function page_stats(array $user): void {
         echo '<tr><td>' . st_jdate((int)$r['ts']) . ' ' . st_hm((int)$r['ts']) . '</td><td dir="ltr">' . e($r['path']) . '</td><td>' . e(trim($loc) ?: '—') . '</td><td>' . e(($devNames[$r['dev']] ?? '') . ' · ' . $r['os'] . ' · ' . $r['browser']) . '</td><td>' . e($r['ref_host'] ?: ($refNames[$r['ref_type']] ?? '—')) . '</td><td>' . ($r['dur'] ? st_dur((int)$r['dur']) : '—') . '</td></tr>';
     }
     echo '</tbody></table></div></section><p class="muted st-note">ربات‌ها، مرورگرهای خودکار، درخواست «Do Not Track» و بازدیدهای مرورگرهای حذف‌شده شمرده نمی‌شوند. بازدید داخل پنل ثبت نمی‌شود. داده‌ها ۱۳ ماه نگه داشته می‌شود.</p>';
+    echo $diag();
     layout_end();
 }

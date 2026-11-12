@@ -107,3 +107,4 @@ body.login{display:flex;align-items:center;justify-content:center;min-height:100
 .st-heat .hc{height:18px;background:var(--blue);border-radius:3px}.st-heat .hh,.st-heat .hd{color:var(--muted);text-align:center}.st-heat .hd{text-align:right}
 .st-note{font-size:.82rem}.tbl-wrap{overflow:auto}
 @media (max-width:700px){.st-bars li{grid-template-columns:1fr auto}.st-bars .bar{grid-column:1/-1;order:3}}
+.st-log{background:#10222f;color:#cfe3f0;padding:10px;border-radius:8px;overflow:auto;font-size:.78rem;white-space:pre-wrap}
