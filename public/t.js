@@ -8,7 +8,7 @@
     var now = Date.now(), vid = ls.getItem('hc_v'), isNew = 0, sid = ls.getItem('hc_s'), seen = +ls.getItem('hc_t') || 0, entry = 0;
     if (!vid) { vid = rnd(); ls.setItem('hc_v', vid); isNew = 1; }
     if (!sid || now - seen > 30 * 60 * 1000) { sid = rnd(); ls.setItem('hc_s', sid); entry = 1; }
-    var cur = null, shownAt = 0, last = '', url = '/t.php';
+    var cur = null, shownAt = 0, last = '', url = '/dynamic.php?hc=1';
     function send(o) {
       var s = JSON.stringify(o);
       try { if (navigator.sendBeacon && navigator.sendBeacon(url, new Blob([s], { type: 'text/plain' }))) return; } catch (e) {}
