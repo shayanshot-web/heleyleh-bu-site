@@ -30,11 +30,11 @@ RewriteRule ^search-cms\.json$ /dynamic.php?searchindex=1 [L]
 RewriteRule ^(?:(en|ru)/)?$ /dynamic.php?home=1&hl=$1 [L,QSA]
 RewriteRule ^((?:en/|ru/)?(?:about|accommodations|experiences|gallery|blog|events|handicraft-shop|about-us|stay|things-to-do|photo-gallery|travel-blog|events-calendar|craft-shop|o-nas|prozhivanie|vpechatleniya|galereya|blog-helile|sobytiya|remesla)(?:/[^/.]+)?)/?$ /dynamic.php?p=$1 [L,QSA]
 
-# همهٔ صفحه‌های استاتیک (HTML و فایل‌های .txt مسیریابی Next) از ov.php رد می‌شوند تا متن‌های ویرایش‌شدهٔ «متن‌های سایت» در پنل اعمال شود
+# همهٔ صفحه‌های استاتیک (HTML و فایل‌های .txt مسیریابی Next) از dynamic.php رد می‌شوند تا متن‌های ویرایش‌شدهٔ «متن‌های سایت» در پنل اعمال شود
 RewriteCond %{REQUEST_URI} !^/(admin|uploads|cms-core|cms-data|cms_data|_next|\.well-known)/
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
 RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
-RewriteRule ^(.*(?:/|\.html|\.txt))$ /ov.php?u=/$1 [L,QSA]
+RewriteRule ^(.*(?:/|\.html|\.txt))$ /dynamic.php?ovp=/$1 [L]
 </IfModule>
 
 ErrorDocument 404 /404.html
