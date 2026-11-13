@@ -21,6 +21,7 @@ function layout_start(string $title, string $active, array $user): void {
     $nav = [['dashboard', '/admin/', '⌂', 'پیشخوان', true]];
     foreach (TYPES as $k => $t) $nav[] = ['list-' . $k, '/admin/?a=list&type=' . $k, $t['icon'], $t['label'], can($k)];
     $nav[] = ['stats', '/admin/?a=stats', '◔', 'آمار بازدید', can('others')];
+    $nav[] = ['tv', '/admin/?a=tv', '▶', 'تلویزیون گالری', can('gallery')];
     $nav[] = ['news', '/admin/?a=news', '▦', 'اخبار هلیله', can('page')];
     $nav[] = ['content', '/admin/?a=content', '✎', 'متن‌های سایت', can('page')];
     $nav[] = ['media', '/admin/?a=media', '▤', 'کتابخانه رسانه', can('media')];
@@ -46,6 +47,7 @@ function render_page(string $a, array $user, string $type): void {
         case 'stats': page_stats($user); break;
         case 'content': page_content($user); break;
         case 'news': page_news($user); break;
+        case 'tv': page_tv($user); break;
         case 'media': page_media($user); break;
         case 'messages': page_messages($user); break;
         case 'comments': page_comments($user); break;
