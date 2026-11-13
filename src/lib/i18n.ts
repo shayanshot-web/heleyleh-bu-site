@@ -26,6 +26,7 @@ export const innerIds: InnerPageId[] = [
   'gallery',
   'blog',
   'events',
+  'news',
   'shop',
   'attractions',
   'restaurants',

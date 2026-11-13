@@ -16,6 +16,7 @@ export const fa: Dict = {
     gallery: 'گالری',
     blog: 'کتابخانه',
     events: 'رویدادها',
+    news: 'اخبار هلیله',
     shop: 'صنایع دستی',
     attractions: 'جاذبه‌ها',
     restaurants: 'خوراک',
@@ -28,6 +29,7 @@ export const fa: Dict = {
     gallery: 'gallery',
     blog: 'blog',
     events: 'events',
+    news: 'news',
     shop: 'handicraft-shop',
     attractions: 'attractions',
     restaurants: 'restaurants',
@@ -158,6 +160,11 @@ export const fa: Dict = {
     events: {
       title: 'تقویم هلیله',
       lead: 'جشن‌های کهن ایرانی، ماه به ماه؛ برای برنامه‌ریزی سفر و دیدار از هلیله در روزهای خاص.',
+      sections: [],
+    },
+    news: {
+      title: 'اخبار هلیله',
+      lead: 'آخرین خبرها و گزارش‌های رسانه‌ها دربارهٔ هلیله؛ هر خبر به سایت خبری اصلی لینک است.',
       sections: [],
     },
     shop: {

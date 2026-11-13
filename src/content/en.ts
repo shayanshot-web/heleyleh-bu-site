@@ -16,6 +16,7 @@ export const en: Dict = {
     gallery: 'Gallery',
     blog: 'Library',
     events: 'Events',
+    news: 'News',
     shop: 'Handicrafts',
     attractions: 'Attractions',
     restaurants: 'Food',
@@ -28,6 +29,7 @@ export const en: Dict = {
     gallery: 'photo-gallery',
     blog: 'travel-blog',
     events: 'events-calendar',
+    news: 'news',
     shop: 'craft-shop',
     attractions: 'attractions',
     restaurants: 'restaurants',
@@ -155,6 +157,11 @@ export const en: Dict = {
     events: {
       title: 'Helileh calendar',
       lead: 'Ancient Iranian festivals, month by month: handy for planning a trip to Helileh on a special day.',
+      sections: [],
+    },
+    news: {
+      title: 'Helileh News',
+      lead: 'Latest news and media reports about Helileh; every story links to the original news site.',
       sections: [],
     },
     shop: {
