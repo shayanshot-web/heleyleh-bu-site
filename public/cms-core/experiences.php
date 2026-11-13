@@ -67,8 +67,19 @@ function xp_section_url(string $lang): string {
     return ($lang === 'fa' ? '/' : "/$lang/") . SECTIONS[$lang]['experiences'] . '/';
 }
 
+/** عکس‌های ثابت سایت (public/people) برای مجری‌هایی که در پنل عکس ندارند؛ با نام فارسی تطبیق داده می‌شود. عکس پنل همیشه اولویت دارد. */
+const XP_STATIC_PHOTOS = [
+    'حیدر بیمکی' => 'heydar-bimaki.webp', 'سینا آرش' => 'sina-arash.webp', 'جعفر دورفشان' => 'jafar-dorfeshan.webp',
+    'امیررضا رهبر' => 'amirreza-rahbar.webp', 'سید رضا موسوی' => 'reza-mousavi.webp', 'حسین خضری' => 'hossein-khezri.webp', 'مهدی انصاری' => 'mehdi-ansari.webp',
+];
 function xp_avatar(array $p, string $lang): string {
     $m = $p['image'] ? media_get($p['image']) : null;
+    if (!$m) {
+        $f = XP_STATIC_PHOTOS[trim(xp_name($p, 'fa'))] ?? '';
+        if ($f !== '' && is_file(CMS_ROOT . '/people/' . $f)) {
+            return '<span class="xp-photo has"><img src="/people/' . e($f) . '" alt="' . e(xp_name($p, $lang)) . '" width="84" height="84" loading="lazy"/></span>';
+        }
+    }
     if ($m) {
         $alt = ($m['alt_' . $lang] ?? '') !== '' ? $m['alt_' . $lang] : xp_name($p, $lang);
         return '<span class="xp-photo has"><img src="' . e(media_url($m, true)) . '" alt="' . e($alt) . '" width="84" height="84" loading="lazy"/></span>';

@@ -17,7 +17,7 @@ export const people: Record<string, Person> = {
   'abdolhossein-barkh': { name: { fa: 'عبدالحسین برخ', en: 'Abdolhossein Barkh', ru: 'Абдольхоссейн Барх' }, phone: '09179294164' },
   'ali-daryaeinejad': { name: { fa: 'علی دریایی‌نژاد', en: 'Ali Daryaeinejad', ru: 'Али Дарьяинеджад' }, phone: '09176695283' },
   'hossein-hasanebrahimi': { name: { fa: 'حسین حسن‌ابراهیمی', en: 'Hossein Hasanebrahimi', ru: 'Хосейн Хасан-Ибрахими' }, phone: '09177719411' },
-  'heydar-bimaki': { name: { fa: 'حیدر بیمکی', en: 'Heydar Bimaki', ru: 'Хейдар Бимаки' }, phone: '09178737122' },
+  'heydar-bimaki': { name: { fa: 'حیدر بیمکی', en: 'Heydar Bimaki', ru: 'Хейдар Бимаки' }, phone: '09178737122', photo: 'heydar-bimaki.webp' },
   'sina-arash': { name: { fa: 'سینا آرش', en: 'Sina Arash', ru: 'Сина Араш' }, phone: '09113814089', photo: 'sina-arash.webp' },
   'jafar-dorfeshan': { name: { fa: 'جعفر دورفشان', en: 'Jafar Dorfeshan', ru: 'Джафар Дурфешан' }, phone: '09171710056', photo: 'jafar-dorfeshan.webp' },
   'ali-khajeh': { name: { fa: 'علی خواجه', en: 'Ali Khajeh', ru: 'Али Хаджех' }, phone: '09171753730' },
