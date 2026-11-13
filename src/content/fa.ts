@@ -16,7 +16,7 @@ export const fa: Dict = {
     gallery: 'گالری',
     blog: 'کتابخانه',
     events: 'رویدادها',
-    news: 'اخبار هلیله',
+    news: 'خبر',
     shop: 'صنایع دستی',
     attractions: 'جاذبه‌ها',
     restaurants: 'خوراک',
