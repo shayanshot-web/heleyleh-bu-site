@@ -7,6 +7,7 @@ require __DIR__ . '/content.php';
 require __DIR__ . '/stats.php';
 require __DIR__ . '/news.php';
 require __DIR__ . '/tv.php';
+require __DIR__ . '/books.php';
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
@@ -55,6 +56,7 @@ if (($a === 'tr_settings' || $a === 'tr_test') && $post) {
 }
 
 if ($a === 'content_save' && $post) content_save($user);
+if (in_array($a, ['book_cover_save', 'book_cover_reset'], true) && $post) books_admin_post($user, $a);
 if (in_array($a, ['tv_add', 'tv_save', 'tv_del', 'tv_toggle', 'tv_move', 'tv_refetch'], true) && $post) tv_admin_post($user, $a);
 if (in_array($a, ['news_add', 'news_save', 'news_del', 'news_toggle', 'news_refetch'], true) && $post) news_admin_post($user, $a);
 

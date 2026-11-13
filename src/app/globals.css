@@ -2857,7 +2857,11 @@ img, svg, video { max-width: 100%; }
   background-image: linear-gradient(to left, rgba(70, 45, 20, 0.28), transparent 9%);
 }
 [dir='rtl'] .b3-back { background-image: linear-gradient(to right, rgba(70, 45, 20, 0.28), transparent 9%); }
-.cv-img { display: block; object-fit: cover; }
+.cv-img { display: block; object-fit: cover; object-position: top center; }
+.b3-stage:not(.is-open) .b3-cover:hover { transform: rotateY(calc(var(--rot) * 0.06)); }
+.b3-hint { position: absolute; inset-inline: 0; bottom: 0; padding: 30px 10px 12px; text-align: center; color: #fff; font-weight: 700; font-size: 0.9rem; background: linear-gradient(transparent, rgba(10, 6, 2, 0.72)); pointer-events: none; animation: b3-hint 2.4s ease-in-out infinite; }
+@keyframes b3-hint { 50% { opacity: 0.55; } }
+@media (prefers-reduced-motion: reduce) { .b3-hint { animation: none; } }
 
 /* جلد گرافیکی */
 .cv {
