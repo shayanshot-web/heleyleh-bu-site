@@ -88,6 +88,7 @@ function cms_render_request(): void {
     $type = SECTION_TYPES[$section] ?? null;
     $title = null; $desc = ''; $main = null; $canon = cms_url($lang, $section);
     $alts = []; $inject = ''; $items = [];
+    $tv = '';
     $keep = false;   // true: اسکریپت‌های Next حفظ می‌شود (فقط کارت‌های تجربه‌ها جایگزین شده و هیدریشن آن‌ها را بازنویسی نمی‌کند)
 
     if ($section === 'news') {
@@ -127,8 +128,9 @@ function cms_render_request(): void {
         $s->execute([$lang, $section]); $pid = $s->fetchColumn();
         if ($pid) { $pi = item_load((int)$pid); $pg = $pi['tr'][$lang]; $title = $pg['title']; $desc = $pg['excerpt']; }
         $items = $type ? cms_items($type, $lang) : [];
+        if ($section === 'gallery') $tv = tv_block($lang);   // تلویزیون بالای گالری (اگر ویدیویی در پنل ثبت شده)
         $xpInner = $section === 'experiences' ? xp_cards_html($lang) : '';   // تجربه‌ها و مجری‌های پنل (اگر منتشر شده باشد)
-        if (!$pg && !$items && $xpInner === '') { header('Content-Type: text/html; charset=utf-8'); echo $tpl; return; }   // بدون تغییر: همان صفحه استاتیک
+        if (!$pg && !$items && $xpInner === '' && $tv === '') { header('Content-Type: text/html; charset=utf-8'); echo $tpl; return; }   // بدون تغییر: همان صفحه استاتیک
         $list = '';
         if ($xpInner !== '') {
             if ($pg) $list .= '<div class="container xp-page"><ul class="xp-grid">' . $xpInner . '</ul></div>';   // متن ویرایش‌شدهٔ صفحه + کارت‌ها
@@ -164,6 +166,7 @@ function cms_render_request(): void {
             return $m[1] . $inner . $inject . $m[3];
         }, $out, 1);
     }
+    if ($tv !== '') $out = preg_replace_callback('#(<main\b[^>]*>.*?</section>)#si', fn($m) => $m[1] . $tv, $out, 1);
     if ($title !== null) {
         $siteName = '';
         if (preg_match('#<title>(.*?)</title>#s', $out, $tm) && preg_match('#[\|\-–—]\s*([^\|\-–—]+)$#u', html_entity_decode($tm[1]), $sm)) $siteName = trim($sm[1]);
@@ -182,6 +185,7 @@ function cms_render_request(): void {
     $css = '<style>.cms-thumb{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;margin-bottom:10px}.cms-cover img{width:100%;height:auto;border-radius:var(--radius);margin-bottom:18px}.cms-body img{max-width:100%;height:auto;border-radius:10px}.cms-body{overflow-wrap:anywhere}.cms-info{list-style:none;padding:0;margin:0 0 16px;color:var(--muted)}.cms-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.cms-gallery figure{margin:0}.cms-gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}.cms-gallery figcaption{font-size:.9rem;color:var(--muted);padding-top:4px}.cms-list{padding-block:24px 56px}.cms-req{margin-top:32px}</style>';
     $js = '<script>(function(){var b=document.querySelector(".nav-toggle"),n=document.getElementById("site-nav");if(b&&n)b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o)});document.querySelectorAll(".cms-req").forEach(function(f){f.addEventListener("submit",function(e){e.preventDefault();var s=f.querySelector(".form-status"),btn=f.querySelector("button");btn.disabled=true;fetch("/contact.php",{method:"POST",body:new FormData(f),credentials:"same-origin"}).then(function(r){return r.json()}).then(function(d){s.className="form-status "+(d.ok?"ok":"error");s.textContent=d.ok?f.dataset.ok:f.dataset.err;if(d.ok)f.reset()}).catch(function(){s.className="form-status error";s.textContent=f.dataset.err}).finally(function(){btn.disabled=false})})})})();</script>';
     if ($section === 'news') $css .= news_css();
+    if ($tv !== '') $css .= tv_css();
     if (!$keep) {   // با حفظ اسکریپت‌های Next، منو و ظاهر را خود سایت اداره می‌کند
         $out = preg_replace_callback('#</head>#i', fn() => $css . '</head>', $out, 1);
         $out = preg_replace_callback('#</body>#i', fn() => $js . '</body>', $out, 1);

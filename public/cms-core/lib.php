@@ -358,3 +358,4 @@ function unique_slug(string $type, string $lang, string $slug, int $exceptId): s
 require_once __DIR__ . '/translate.php';
 require_once __DIR__ . '/experiences.php';
 require_once __DIR__ . '/news.php';
+require_once __DIR__ . '/tv.php';
