@@ -16,6 +16,7 @@ export const ru: Dict = {
     gallery: 'Галерея',
     blog: 'Библиотека',
     events: 'События',
+    news: 'Новости',
     shop: 'Ремёсла',
     attractions: 'Достопримечательности',
     restaurants: 'Еда',
@@ -28,6 +29,7 @@ export const ru: Dict = {
     gallery: 'galereya',
     blog: 'blog-helile',
     events: 'sobytiya',
+    news: 'novosti',
     shop: 'remesla',
     attractions: 'dostoprimechatelnosti',
     restaurants: 'restorany',
@@ -158,6 +160,11 @@ export const ru: Dict = {
     events: {
       title: 'Календарь Хелилы',
       lead: 'Древние иранские праздники по месяцам: удобно для планирования поездки в Хелилу в особый день.',
+      sections: [],
+    },
+    news: {
+      title: 'Новости Хелиле',
+      lead: 'Свежие новости и репортажи СМИ о Хелиле; каждая новость ведёт на исходный сайт.',
       sections: [],
     },
     shop: {

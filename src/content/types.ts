@@ -8,6 +8,7 @@ export type PageId =
   | 'gallery'
   | 'blog'
   | 'events'
+  | 'news'
   | 'shop'
   | 'attractions'
   | 'restaurants'

@@ -73,6 +73,10 @@ function cms_render_request(): void {
     $lang = 'fa';
     if ($seg && in_array($seg[0], ['en', 'ru'], true)) $lang = array_shift($seg);
     $secSlug = rawurldecode($seg[0] ?? ''); $itemSlug = isset($seg[1]) ? rawurldecode($seg[1]) : '';
+    $newsPage = 1;
+    if (count($seg) === 3 && $seg[1] === 'page' && ctype_digit($seg[2]) && array_search(rawurldecode($seg[0]), SECTIONS[$lang], true) === 'news') {
+        $newsPage = max(1, (int)$seg[2]); $seg = [$seg[0]]; $itemSlug = '';
+    }
     if (count($seg) < 1 || count($seg) > 2) cms_404();
     $section = array_search($secSlug, SECTIONS[$lang], true);
     if ($section === false) cms_404();
@@ -86,7 +90,15 @@ function cms_render_request(): void {
     $alts = []; $inject = ''; $items = [];
     $keep = false;   // true: اسکریپت‌های Next حفظ می‌شود (فقط کارت‌های تجربه‌ها جایگزین شده و هیدریشن آن‌ها را بازنویسی نمی‌کند)
 
-    if ($itemSlug !== '') {
+    if ($section === 'news') {
+        if ($itemSlug !== '') cms_404();
+        [$nhtml, $npages, $npage] = news_main($lang, $newsPage);
+        if ($newsPage > 1 && $newsPage > $npages) cms_404();
+        $main = $nhtml; $title = (NEWS_UI[$lang]['name'] ?? 'News') . ($npage > 1 ? ' – ' . $npage : '');
+        $desc = NEWS_UI[$lang]['desc'] ?? '';
+        $canon = news_page_url($lang, $npage);
+        foreach (LANGS as $l => $_) $alts[$l] = news_page_url($l, $npage);
+    } elseif ($itemSlug !== '') {
         if (!$type || $type === 'gallery') cms_404();
         $s = db()->prepare("SELECT i.* FROM items i JOIN item_tr t ON t.item_id=i.id WHERE i.type=? AND t.lang=? AND t.slug=? AND i.status='published' AND t.title<>''");
         $s->execute([$type, $lang, $itemSlug]); $row = $s->fetch();
@@ -169,6 +181,7 @@ function cms_render_request(): void {
     }, $out);
     $css = '<style>.cms-thumb{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;margin-bottom:10px}.cms-cover img{width:100%;height:auto;border-radius:var(--radius);margin-bottom:18px}.cms-body img{max-width:100%;height:auto;border-radius:10px}.cms-body{overflow-wrap:anywhere}.cms-info{list-style:none;padding:0;margin:0 0 16px;color:var(--muted)}.cms-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.cms-gallery figure{margin:0}.cms-gallery img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:12px}.cms-gallery figcaption{font-size:.9rem;color:var(--muted);padding-top:4px}.cms-list{padding-block:24px 56px}.cms-req{margin-top:32px}</style>';
     $js = '<script>(function(){var b=document.querySelector(".nav-toggle"),n=document.getElementById("site-nav");if(b&&n)b.addEventListener("click",function(){var o=n.classList.toggle("open");b.setAttribute("aria-expanded",o)});document.querySelectorAll(".cms-req").forEach(function(f){f.addEventListener("submit",function(e){e.preventDefault();var s=f.querySelector(".form-status"),btn=f.querySelector("button");btn.disabled=true;fetch("/contact.php",{method:"POST",body:new FormData(f),credentials:"same-origin"}).then(function(r){return r.json()}).then(function(d){s.className="form-status "+(d.ok?"ok":"error");s.textContent=d.ok?f.dataset.ok:f.dataset.err;if(d.ok)f.reset()}).catch(function(){s.className="form-status error";s.textContent=f.dataset.err}).finally(function(){btn.disabled=false})})})})();</script>';
+    if ($section === 'news') $css .= news_css();
     if (!$keep) {   // با حفظ اسکریپت‌های Next، منو و ظاهر را خود سایت اداره می‌کند
         $out = preg_replace_callback('#</head>#i', fn() => $css . '</head>', $out, 1);
         $out = preg_replace_callback('#</body>#i', fn() => $js . '</body>', $out, 1);

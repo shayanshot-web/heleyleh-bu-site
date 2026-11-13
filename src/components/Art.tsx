@@ -15,6 +15,7 @@ export type IconName =
   | 'blog'
   | 'library'
   | 'events'
+  | 'news'
   | 'shop'
   | 'contact'
   | 'sea'
@@ -119,6 +120,13 @@ const icons: Record<IconName, ReactNode> = {
     <>
       <rect className="f" x="8" y="12" width="32" height="28" rx="4" />
       <path d="M8 21h32M16 8v8M32 8v8M17 28h4M27 28h4M17 34h4" />
+    </>
+  ),
+  /* روزنامه */
+  news: (
+    <>
+      <path className="f" d="M10 10h24v28H12a4 4 0 0 1-4-4V12a2 2 0 0 1 2-2z" />
+      <path d="M34 18h6v16a4 4 0 0 1-4 4M15 17h14M15 23h6M24 23h5M15 29h14M15 34h9" />
     </>
   ),
   /* کوزه سفالی */

@@ -5,11 +5,12 @@ require __DIR__ . '/views.php';
 require __DIR__ . '/xp.php';
 require __DIR__ . '/content.php';
 require __DIR__ . '/stats.php';
+require __DIR__ . '/news.php';
 header('X-Frame-Options: DENY');
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 header('Cache-Control: no-store');
-header("Content-Security-Policy: default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; form-action 'self'");
+header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; form-action 'self'");
 
 try { db(); } catch (Throwable $ex) { error_log('cms db: ' . $ex->getMessage()); http_response_code(500); exit('خطای دیتابیس؛ قابل‌نوشتن‌بودن پوشهٔ داده و فعال‌بودن pdo_sqlite را بررسی کنید (جزئیات در error_log هاست).'); }
 if (!(int)db()->query('SELECT COUNT(*) FROM users')->fetchColumn()) { header('Location: /install.php'); exit; }
@@ -53,6 +54,7 @@ if (($a === 'tr_settings' || $a === 'tr_test') && $post) {
 }
 
 if ($a === 'content_save' && $post) content_save($user);
+if (in_array($a, ['news_add', 'news_save', 'news_del', 'news_toggle', 'news_refetch'], true) && $post) news_admin_post($user, $a);
 
 /* ---- ذخیره محتوا ---- */
 if ($a === 'save' && $post) {

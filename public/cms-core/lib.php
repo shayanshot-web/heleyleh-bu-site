@@ -20,9 +20,9 @@ const TYPES = [
 ];
 // آدرس بخش‌ها در هر زبان (همان اسلاگ‌های سایت)
 const SECTIONS = [
-    'fa' => ['about' => 'about', 'stay' => 'accommodations', 'experiences' => 'experiences', 'gallery' => 'gallery', 'blog' => 'blog', 'events' => 'events', 'shop' => 'handicraft-shop'],
-    'en' => ['about' => 'about-us', 'stay' => 'stay', 'experiences' => 'things-to-do', 'gallery' => 'photo-gallery', 'blog' => 'travel-blog', 'events' => 'events-calendar', 'shop' => 'craft-shop'],
-    'ru' => ['about' => 'o-nas', 'stay' => 'prozhivanie', 'experiences' => 'vpechatleniya', 'gallery' => 'galereya', 'blog' => 'blog-helile', 'events' => 'sobytiya', 'shop' => 'remesla'],
+    'fa' => ['about' => 'about', 'stay' => 'accommodations', 'experiences' => 'experiences', 'gallery' => 'gallery', 'blog' => 'blog', 'events' => 'events', 'shop' => 'handicraft-shop', 'news' => 'news'],
+    'en' => ['about' => 'about-us', 'stay' => 'stay', 'experiences' => 'things-to-do', 'gallery' => 'photo-gallery', 'blog' => 'travel-blog', 'events' => 'events-calendar', 'shop' => 'craft-shop', 'news' => 'news'],
+    'ru' => ['about' => 'o-nas', 'stay' => 'prozhivanie', 'experiences' => 'vpechatleniya', 'gallery' => 'galereya', 'blog' => 'blog-helile', 'events' => 'sobytiya', 'shop' => 'remesla', 'news' => 'novosti'],
 ];
 const TYPE_SECTION = ['post' => 'blog', 'product' => 'shop', 'event' => 'events', 'stay' => 'stay', 'gallery' => 'gallery'];
 const PAGE_KEYS = ['about' => 'درباره روستا', 'stay' => 'اقامت (متن بالای صفحه)', 'experiences' => 'تجربه‌ها', 'gallery' => 'گالری (متن بالای صفحه)', 'blog' => 'بلاگ (متن بالای صفحه)', 'events' => 'رویدادها (متن بالای صفحه)', 'shop' => 'فروشگاه (متن بالای صفحه)'];
@@ -357,3 +357,4 @@ function unique_slug(string $type, string $lang, string $slug, int $exceptId): s
 /* ---------- ترجمهٔ خودکار و «تجربه‌ها و آدم‌هایش» ---------- */
 require_once __DIR__ . '/translate.php';
 require_once __DIR__ . '/experiences.php';
+require_once __DIR__ . '/news.php';
