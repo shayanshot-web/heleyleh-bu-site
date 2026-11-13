@@ -70,18 +70,17 @@ function tv_add_url(string $raw): array {
 }
 
 const TV_UI = [
-    'fa' => ['name' => 'تلویزیون هلیله', 'idle' => 'یک کانال را انتخاب کنید', 'prev' => 'کانال قبلی', 'next' => 'کانال بعدی', 'fs' => 'تمام‌صفحه', 'off' => 'خاموش', 'exit' => 'خروج از تمام‌صفحه', 'open' => 'پخش در سایت منبع', 'ch' => 'کانال', 'hint' => 'روی هر کانال بزنید تا پخش شود'],
-    'en' => ['name' => 'Helileh TV', 'idle' => 'Pick a channel', 'prev' => 'Previous channel', 'next' => 'Next channel', 'fs' => 'Full screen', 'off' => 'Power off', 'exit' => 'Exit full screen', 'open' => 'Watch on the original site', 'ch' => 'Channel', 'hint' => 'Tap a channel to play it'],
-    'ru' => ['name' => 'Телевизор Хелиле', 'idle' => 'Выберите канал', 'prev' => 'Предыдущий канал', 'next' => 'Следующий канал', 'fs' => 'На весь экран', 'off' => 'Выключить', 'exit' => 'Выйти из полноэкранного режима', 'open' => 'Смотреть на сайте источника', 'ch' => 'Канал', 'hint' => 'Нажмите на канал, чтобы смотреть'],
+    'fa' => ['name' => 'تلویزیون هلیله', 'idle' => 'یک کانال را انتخاب کنید', 'prev' => 'کانال قبلی', 'next' => 'کانال بعدی', 'fs' => 'تمام‌صفحه', 'off' => 'خاموش', 'exit' => 'خروج از تمام‌صفحه', 'open' => 'پخش در سایت منبع', 'ch' => 'کانال', 'hint' => 'روی هر کانال بزنید تا پخش شود', 'soon' => 'به‌زودی ویدیوهای هلیله اینجا پخش می‌شود'],
+    'en' => ['name' => 'Helileh TV', 'idle' => 'Pick a channel', 'prev' => 'Previous channel', 'next' => 'Next channel', 'fs' => 'Full screen', 'off' => 'Power off', 'exit' => 'Exit full screen', 'open' => 'Watch on the original site', 'ch' => 'Channel', 'hint' => 'Tap a channel to play it', 'soon' => 'Helileh videos are coming soon'],
+    'ru' => ['name' => 'Телевизор Хелиле', 'idle' => 'Выберите канал', 'prev' => 'Предыдущий канал', 'next' => 'Следующий канал', 'fs' => 'На весь экран', 'off' => 'Выключить', 'exit' => 'Выйти из полноэкранного режима', 'open' => 'Смотреть на сайте источника', 'ch' => 'Канал', 'hint' => 'Нажмите на канал, чтобы смотреть', 'soon' => 'Скоро здесь появятся видео о Хелиле'],
 ];
 
-/** بلوک تلویزیون؛ اگر ویدیویی ثبت نشده باشد رشتهٔ خالی (صفحه همان گالری قبلی می‌ماند) */
+/** بلوک تلویزیون (بدون کانال هم نمایش داده می‌شود با پیام «به‌زودی») */
 function tv_block(string $lang): string {
     try {
         tv_ready();
         $rows = db()->query("SELECT * FROM tv WHERE status='published' ORDER BY sort, id LIMIT 60")->fetchAll();
     } catch (Throwable $ex) { return ''; }
-    if (!$rows) return '';
     $u = TV_UI[$lang] ?? TV_UI['fa'];
     $ch = '';
     foreach ($rows as $i => $r) {
@@ -103,10 +102,10 @@ function tv_block(string $lang): string {
         . '<div class="tvx-room"><div class="tvx-set">'
         . '<div class="tvx-ant" aria-hidden="true"><i></i><i></i><b></b></div>'
         . '<div class="tvx-cab"><div class="tvx-bezel"><div class="tvx-screen" id="tvx-screen"><div class="tvx-stage"></div>'
-        . '<div class="tvx-idle"><span>' . e($u['idle']) . '</span></div><div class="tvx-static" aria-hidden="true"></div><div class="tvx-glass" aria-hidden="true"></div>'
+        . '<div class="tvx-idle"><span>' . e($rows ? $u['idle'] : $u['soon']) . '</span></div><div class="tvx-static" aria-hidden="true"></div><div class="tvx-glass" aria-hidden="true"></div>'
         . '<button type="button" class="tvx-exit" aria-label="' . e($u['exit']) . '">✕</button></div></div>'
         . '<div class="tvx-side"><div class="tvx-grille" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="tvx-knobs">' . $knob('prev') . $knob('next') . $knob('fs') . $knob('off') . '</div><p class="tvx-brand">' . e($u['name']) . '</p></div></div>'
-        . '<div class="tvx-plate"><span class="tvx-cap" aria-live="polite">' . e($u['hint']) . '</span></div></div>'
+        . '<div class="tvx-plate"><span class="tvx-cap" aria-live="polite">' . e($rows ? $u['hint'] : $u['soon']) . '</span></div></div>'
         . $jug . $dhow . '</div>'
         . '<div class="tvx-console"><div class="tvx-mosaic" aria-hidden="true"></div><ul class="tvx-chs">' . $ch . '</ul><div class="tvx-feet" aria-hidden="true"><i></i><i></i></div></div>'
         . '<script>' . tv_js() . '</script></section>';
