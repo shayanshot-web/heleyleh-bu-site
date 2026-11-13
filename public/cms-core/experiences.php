@@ -81,7 +81,7 @@ function xp_cards_html(string $lang): string {
     $exps = xp_experiences(); if (!$exps) return '';
     $icons = xp_icons(); $u = XP_UI[$lang]; $h = '';
     foreach ($exps as $e) {
-        $h .= '<li class="xp-card" data-sound="sea"><span class="xp-icon">' . ($icons[$e['x']['icon'] ?? '']['svg'] ?? '') . '</span><h3>' . e(xp_name($e, $lang)) . '</h3>';
+        $h .= '<li class="xp-card" data-sound="hang"><span class="xp-icon">' . ($icons[$e['x']['icon'] ?? '']['svg'] ?? '') . '</span><h3>' . e(xp_name($e, $lang)) . '</h3>';
         if (!$e['who']) $h .= '<p class="xp-free">' . e($u['noPerson']) . '</p>';
         else {
             $h .= '<ul class="xp-people">';
@@ -102,7 +102,7 @@ function xp_strip_html(string $lang): string {
     $exps = xp_experiences(); if (!$exps) return '';
     $icons = xp_icons(); $h = '';
     foreach (array_slice($exps, 0, 12) as $e) {
-        $h .= '<li><a href="' . e(xp_section_url($lang)) . '" data-sound="sea"><span class="xp-icon sm">' . ($icons[$e['x']['icon'] ?? '']['svg'] ?? '') . '</span><span>' . e(xp_name($e, $lang)) . '</span></a></li>';
+        $h .= '<li><a href="' . e(xp_section_url($lang)) . '" data-sound="hang"><span class="xp-icon sm">' . ($icons[$e['x']['icon'] ?? '']['svg'] ?? '') . '</span><span>' . e(xp_name($e, $lang)) . '</span></a></li>';
     }
     return $h;
 }

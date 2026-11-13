@@ -165,7 +165,7 @@ export function HomeView({ lang }: { lang: Lang }) {
           <h2 className="accent">{h.doTitle}</h2>
           <div className="cards four">
             {h.doItems.map((t, i) => (
-              <div key={t.h} className="card do-card" data-sound={doIcons[i]}>
+              <div key={t.h} className="card do-card" data-sound="hang">
                 <span className="do-icon">
                   <Icon name={doIcons[i]} size={40} />
                 </span>

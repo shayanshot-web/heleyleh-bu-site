@@ -202,6 +202,34 @@ function wave(c: Ctx, out: AudioNode, at: number, dur: number, vol: number) {
   }
 }
 
+/* هنگدرام (هندپن): هر آیکن یک نُت از گام «ر مینور» (D Kurd) دارد؛ با حرکت موس از روی آیکن‌ها پشت‌سرهم یک آرپژ/موسیقی ساخته می‌شود.
+   صدا: پایه + اکتاو + دوازدهم (همان هارمونیک‌های مشخص هنگدرام) با «تُنک» کوتاه ضربه و محو شدن آرام (~۱ ثانیه). نُت‌ها روی هم می‌نشینند و قطع نمی‌شوند. */
+const HANG_SCALE = [293.66, 349.23, 440, 523.25, 329.63, 392, 466.16, 587.33, 220, 261.63, 233.08, 146.83];
+
+function hang(c: Ctx, out: AudioNode, f: number) {
+  const t = c.currentTime;
+  const lp = c.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 4200;
+  lp.connect(out);
+  const parts: [number, number, number][] = [
+    [1, 0.3, 1.15],
+    [2, 0.11, 0.7],
+    [3, 0.05, 0.45],
+    [4.02, 0.015, 0.25],
+  ];
+  parts.forEach(([k, vol, dur]) => {
+    const osc = c.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(f * k * 1.014, t); // خم کوتاه فرکانس هنگام ضربه
+    osc.frequency.exponentialRampToValueAtTime(f * k, t + 0.045);
+    osc.connect(env(c, lp, t, vol, 0.004, dur));
+    osc.start(t);
+    osc.stop(t + dur + 0.05);
+  });
+  hiss(c, lp, { type: 'bandpass', f: Math.min(f * 5, 2600), q: 2.2, dur: 0.05, vol: 0.05, attack: 0.002 });
+}
+
 const sounds: Record<string, Maker> = {
   /* موج دریا: بستر کف‌زدن و سه موج پی‌درپی با طول‌های متفاوت (~۶ ثانیه) */
   sea: (c, o) => {
@@ -372,9 +400,18 @@ export default function SoundFX({ onLabel, offLabel, hint }: { onLabel: string; 
   }, []);
 
   const play = useCallback(
-    (name: string) => {
+    (name: string, el?: Element | null) => {
       if (!onRef.current) return;
       const c = ensure();
+      if (name === 'hang') {
+        if (c && outRef.current && c.state === 'running') {
+          const item = el ? el.closest('li') ?? el : null;
+          const kids = item && item.parentElement ? Array.from(item.parentElement.children) : [];
+          const idx = Math.max(0, kids.indexOf(item as Element));
+          hang(c, outRef.current, HANG_SCALE[idx % HANG_SCALE.length]);
+        }
+        return;
+      }
       const make = sounds[name] ?? sounds.drop;
       if (c && outRef.current && c.state === 'running') {
         stopVoice();
@@ -426,7 +463,7 @@ export default function SoundFX({ onLabel, offLabel, hint }: { onLabel: string; 
       const now = performance.now();
       if (now - lastRef.current.t < 140) return;
       lastRef.current.t = now;
-      play(el.getAttribute('data-sound') || 'drop');
+      play(el.getAttribute('data-sound') || 'drop', el);
     };
     const over = (e: Event) => {
       if (!onRef.current) return;
@@ -444,7 +481,7 @@ export default function SoundFX({ onLabel, offLabel, hint }: { onLabel: string; 
       const now = performance.now();
       if (now - lastRef.current.t < 140) return;
       lastRef.current.t = now;
-      play(el.getAttribute('data-sound') || 'drop');
+      play(el.getAttribute('data-sound') || 'drop', el);
     };
     // خروج موس از روی آیکن (یا از پنجره): صدا قطع شود. روی لمس‌صفحه‌ها «هاور» نداریم، پس قطع نمی‌کنیم.
     const out = (e: PointerEvent) => {
