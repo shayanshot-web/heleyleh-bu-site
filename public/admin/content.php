@@ -106,6 +106,7 @@ function page_content(array $user): void {
         }
         echo '</tbody></table>'; layout_end(); return;
     }
+    $keys = array_values(array_filter($keys, fn($k) => !preg_match('/^books\.\d+\.cover$/', $k)));   // جلدها در بخش «جلد کتاب‌ها» است
     if ($keys) {
         echo '<form method="post" action="/admin/?a=content_save" class="ct-form"><input type="hidden" name="_csrf" value="' . e(csrf()) . '"><input type="hidden" name="g" value="' . e($g) . '"><input type="hidden" name="l" value="' . e($l) . '"><input type="hidden" name="q" value="' . e($q) . '">';
         foreach ($keys as $k) {

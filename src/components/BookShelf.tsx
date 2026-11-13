@@ -25,7 +25,9 @@ const spineW = (t: string) => {
 };
 
 const safeHttps = (u?: string) => !!u && /^https:\/\/[^\s"'<>]+$/i.test(u);
-const safeFile = (f?: string) => !!f && /^[\w.-]+$/.test(f);
+const safeFile = (f?: string) => !!f && /^[\w.-]+$/.test(f) && !f.startsWith('_');
+const safeUpload = (f?: string) => !!f && /^\/uploads\/[\w./-]+$/.test(f) && !f.includes('..');
+const coverSrc = (f?: string) => (safeUpload(f) ? f! : safeFile(f) ? `/books/${f}` : '');
 const safeUser = (u?: string) => !!u && /^[\w.]+$/.test(u);
 const digits = (s?: string) => (s || '').replace(/\D/g, '');
 const reduced = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -97,9 +99,10 @@ function Lamp() {
 /* ---------- جلد گرافیکی یا عکس جلد ---------- */
 
 function Cover({ book, color, lang }: { book: Book; color: string; lang: Lang }) {
-  if (book.cover && safeFile(book.cover)) {
+  const src = coverSrc(book.cover);
+  if (src) {
     // eslint-disable-next-line @next/next/no-img-element
-    return <img className="cv-img" src={`/books/${book.cover}`} alt={pick(book.title, lang)} loading="lazy" />;
+    return <img className="cv-img" src={src} alt={pick(book.title, lang)} loading="lazy" />;
   }
   return (
     <span className="cv" style={{ '--c': color, '--bk-ink': inkOn(color) } as CSSProperties}>
@@ -217,8 +220,7 @@ export default function BookShelf({ lang }: { lang: Lang }) {
     window.clearTimeout(timer.current);
     setSelId(id);
     setOpen(false);
-    // کتاب اول روی میز می‌نشیند، بعد جلدش باز می‌شود
-    timer.current = window.setTimeout(() => setOpen(true), reduced() ? 0 : 1250);
+    // کتاب با جلد بسته روی میز می‌نشیند؛ بازدیدکننده با کلیک روی جلد (یا دکمه) ورقش می‌زند
   }, []);
 
   const close = useCallback(() => {
@@ -390,6 +392,7 @@ export default function BookShelf({ lang }: { lang: Lang }) {
                   {/* کلیک روی جلد فقط میان‌بُر ماوس است؛ کنترل دسترسی‌پذیر همان دکمهٔ بالای میز است */}
                   <div className="b3-front" aria-hidden="true" onClick={() => setOpen(true)}>
                     <Cover book={sel} color={selColor} lang={lang} />
+                    <span className="b3-hint">{ui.flipHint}</span>
                   </div>
                   <div className="b3-back">
                     <Specs book={sel} ui={ui} lang={lang} />

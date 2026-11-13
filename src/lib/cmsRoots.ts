@@ -46,7 +46,11 @@ export function flattenRoots(): Record<string, string> {
     }
     if (Array.isArray(v)) return v.forEach((x, i) => walk(x, `${path}.${i}`));
     if (v && typeof v === 'object') {
-      for (const [k, x] of Object.entries(v)) if (!SKIP_KEYS.has(k)) walk(x, `${path}.${k}`);
+      for (const [k, x] of Object.entries(v)) {
+        // جلد کتاب‌ها از پنل (بخش «جلد کتاب‌ها») عوض می‌شود؛ کلید cover فقط برای کتاب‌ها وارد فهرست می‌شود
+        if (k === 'cover' && path.startsWith('books.') && typeof x === 'string') { out[`${path}.${k}`] = x; continue; }
+        if (!SKIP_KEYS.has(k)) walk(x, `${path}.${k}`);
+      }
     }
   };
   for (const [name, obj] of Object.entries(cmsRoots)) walk(obj, name);
