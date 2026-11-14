@@ -359,3 +359,4 @@ require_once __DIR__ . '/translate.php';
 require_once __DIR__ . '/experiences.php';
 require_once __DIR__ . '/news.php';
 require_once __DIR__ . '/tv.php';
+require_once __DIR__ . '/fish.php';

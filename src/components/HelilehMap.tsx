@@ -23,7 +23,7 @@ export default function HelilehMap({ lang, locale, dir }: { lang: Lang; locale: 
 
   // از نزدیک به دور؛ نقاط تا ۱٫۵ کیلومتر از مرکز «هستهٔ روستا» حساب می‌شوند و نمای روستا فقط آن‌ها را نشان می‌دهد
   const items = mapPoints
-    .map((p) => ({ ...p, d: distKm(HELILEH.lat, HELILEH.lon, p.lat, p.lon) }))
+    .map((p) => ({ ...p, d: p.km ?? distKm(HELILEH.lat, HELILEH.lon, p.lat ?? HELILEH.lat, p.lon ?? HELILEH.lon) }))
     .sort((a, b) => a.d - b.d)
     .map((p, i) => ({ ...p, n: i + 1 }))
     .map((p) => {
@@ -42,11 +42,11 @@ export default function HelilehMap({ lang, locale, dir }: { lang: Lang; locale: 
       popup: `<strong>${s.center}</strong>`,
       scope: 'local',
     },
-    ...items.map((p) => ({
+    ...items.filter((p) => p.lat !== undefined && p.lon !== undefined).map((p) => ({
       id: p.id,
       kind: p.kind,
-      lat: p.lat,
-      lon: p.lon,
+      lat: p.lat as number,
+      lon: p.lon as number,
       label: p.name[lang],
       mark: nf.format(p.n),
       popup: `<strong>${p.name[lang]}</strong><br>${km(p.d)} ${s.km} ${s.distanceFrom}${p.href ? `<br><a href="${p.href}">${s.readMore}</a>` : ''}`,

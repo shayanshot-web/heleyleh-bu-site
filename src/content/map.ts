@@ -7,8 +7,11 @@ export type MapKind = 'village' | 'ancient' | 'fun' | 'culture' | 'hub';
 export interface MapPoint {
   id: string;
   kind: MapKind;
-  lat: number;
-  lon: number;
+  /** مختصات؛ اگر ندارد نقطه روی نقشه نمی‌افتد و فقط در فهرست با فاصلهٔ km می‌آید */
+  lat?: number;
+  lon?: number;
+  /** فاصلهٔ ثابت (کیلومتر) برای نقطه‌های بدون مختصات */
+  km?: number;
   /** نقطهٔ محلی (داخل و کنار روستا) یا نقطهٔ منطقه‌ای (بوشهر، بندر، نیروگاه، دلوار، ...) */
   scope: 'local' | 'region';
   /** مطلب مرتبط سایت (در پنجرهٔ نشانگر و فهرست پیوند می‌شود) */
@@ -34,6 +37,9 @@ export const mapPoints: MapPoint[] = [
   { id: 'kalut', kind: 'culture', scope: 'local', lat: 28.8652375, lon: 50.8638906, name: { fa: 'کلوت بوستان لیان', en: 'Lian kalut formations', ru: 'Калуты Лиан' } },
   { id: 'masileh', kind: 'fun', scope: 'local', lat: 28.8757505, lon: 50.8915325, name: { fa: 'مسیله (شوره‌زار) هلیله', en: 'Helileh salt marsh', ru: 'Солончак Хелиле' } },
   { id: 'lian', kind: 'fun', scope: 'local', lat: 28.8607513, lon: 50.8534535, name: { fa: 'پارک ساحلی لیان', en: 'Lian beach park', ru: 'Парк Лиан' } },
+  /* نقاط بدون مختصات: فقط فاصله (کیلومتر) در فهرست */
+  { id: 'bandargah-beach', kind: 'fun', scope: 'region', km: 3, name: { fa: 'ساحل بندرگاه', en: 'Bandargah beach', ru: 'Пляж Бандаргах' } },
+  { id: 'riding-stable', kind: 'fun', scope: 'region', km: 3, name: { fa: 'اسطبل اسب‌سواری', en: 'Horse-riding stable', ru: 'Конюшня для верховой езды' } },
   /* منطقه: شهر، بندر، نیروگاه، دلوار، گورستان باستانی */
   { id: 'npp', kind: 'hub', scope: 'region', lat: 28.8297793, lon: 50.8859682, name: { fa: 'نیروگاه اتمی بوشهر', en: 'Bushehr nuclear plant', ru: 'АЭС «Бушер»' } },
   { id: 'rishehr', kind: 'fun', scope: 'region', lat: 28.8975036, lon: 50.8303717, name: { fa: 'ساحل ریشهر', en: 'Rishehr beach', ru: 'Пляж Ришехр' } },
