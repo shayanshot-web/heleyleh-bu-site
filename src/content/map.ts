@@ -40,6 +40,8 @@ export const mapPoints: MapPoint[] = [
   /* نقاط بدون مختصات: فقط فاصله (کیلومتر) در فهرست */
   { id: 'bandargah-beach', kind: 'fun', scope: 'region', km: 3, name: { fa: 'ساحل بندرگاه', en: 'Bandargah beach', ru: 'Пляж Бандаргах' } },
   { id: 'riding-stable', kind: 'fun', scope: 'region', km: 3, name: { fa: 'اسطبل اسب‌سواری', en: 'Horse-riding stable', ru: 'Конюшня для верховой езды' } },
+  { id: 'bushehr-mall', kind: 'hub', scope: 'region', km: 24, name: { fa: 'مجتمع تجاری و تفریحی بوشهر مال', en: 'Bushehr Mall (shopping and leisure complex)', ru: 'Торгово-развлекательный центр «Бушер Мол»' } },
+  { id: 'delvar-shops', kind: 'hub', scope: 'region', km: 20, name: { fa: 'مراکز خرید ته‌لنجی دلوار', en: 'Delvar tah-lenji shopping centers', ru: 'Торговые центры тах-ленджи в Дельваре' } },
   /* منطقه: شهر، بندر، نیروگاه، دلوار، گورستان باستانی */
   { id: 'npp', kind: 'hub', scope: 'region', lat: 28.8297793, lon: 50.8859682, name: { fa: 'نیروگاه اتمی بوشهر', en: 'Bushehr nuclear plant', ru: 'АЭС «Бушер»' } },
   { id: 'rishehr', kind: 'fun', scope: 'region', lat: 28.8975036, lon: 50.8303717, name: { fa: 'ساحل ریشهر', en: 'Rishehr beach', ru: 'Пляж Ришехр' } },
